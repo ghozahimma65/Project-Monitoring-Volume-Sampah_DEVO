@@ -24,8 +24,9 @@ class DepoRequest extends FormRequest
     return [
         'nama_depo' => 'required|string|max:255',
         'lokasi' => 'required|string',
-        'kapasitas' => 'required|numeric|min:1|max:5000', // Contoh: kapasitas minimal 1, maks 5000
-        // tambahkan aturan lain
+        'panjang' => 'required|numeric|min:1|max:50',
+        'lebar' => 'required|numeric|min:1|max:50',
+        'tinggi' => 'required|numeric|min:1|max:10',
     ];
 }
 }

@@ -46,7 +46,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 // == ADMIN ROUTES (SEMUA DI DALAM SATU GRUP YANG BENAR) ==
 // PERUBAHAN UTAMA: Memanggil class middleware secara langsung
 Route::middleware(['auth', \App\Http\Middleware\AdminAuth::class])->prefix('admin')->name('admin.')->group(function () {
-    
+  
     // Dashboard
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     
@@ -64,6 +64,8 @@ Route::middleware(['auth', \App\Http\Middleware\AdminAuth::class])->prefix('admi
         Route::put('/{depo}', [DepoController::class, 'update'])->name('update');
         Route::delete('/{depo}', [DepoController::class, 'destroy'])->name('destroy');
         Route::post('/preview-calculation', [DepoController::class, 'previewCalculation'])->name('preview-calculation');
+        Route::get('/depos/realtime-volumes', [DepoController::class, 'getRealtimeVolumes'])->name('depos.realtime-volumes');
+
     });
 
     // Report Management
