@@ -45,6 +45,7 @@
                         <th>Status</th>
                         <th>Sensor/ESP</th>
                         <th>Update Terakhir</th>
+                        <th>Kritis Sejak</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -109,6 +110,15 @@
                                 <small class="text-muted">{{ $depo->updated_at->diffForHumans() }}</small>
                             </td>
                             <td>
+                                @if($depo->waktu_kritis)
+                                    {{ \Carbon\Carbon::parse($depo->waktu_kritis)->diffForHumans() }}
+                                    <br>
+                                    <small>({{ \Carbon\Carbon::parse($depo->waktu_kritis)->format('d M Y, H:i') }})</small>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.depos.show', $depo) }}" class="btn btn-outline-info" title="Detail">
                                         <i class="fas fa-eye"></i>
@@ -124,7 +134,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5">
+                            <td colspan="9" class="text-center py-5">
                                 <div class="empty-state">
                                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                                     <h5 class="text-muted">Belum ada depo yang terdaftar</h5>
@@ -147,38 +157,6 @@
     @csrf
     @method('DELETE')
 </form>
-
-<thead>
-    <tr>
-        ...
-        <th>Status</th>
-        <th>Kritis Sejak</th> <!-- Kolom Baru -->
-        <th>Aksi</th>
-        ...
-    </tr>
-</thead>
-<tbody>
-    @foreach($depos as $depo)
-    <tr>
-        ...
-        <td>{{ $depo->status_text }}</td>
-        <td>
-            {{-- Tampilkan hanya jika ada waktunya --}}
-            @if($depo->waktu_kritis)
-                {{-- Tampilkan durasi (misal: 2 jam yang lalu) --}}
-                {{ \Carbon\Carbon::parse($depo->waktu_kritis)->diffForHumans() }}
-                <br>
-                {{-- Tampilkan tanggal pastinya --}}
-                <small>({{ \Carbon\Carbon::parse($depo->waktu_kritis)->format('d M Y, H:i') }})</small>
-            @else
-                -
-            @endif
-        </td>
-        <td>... Aksi ...</td>
-        ...
-    </tr>
-    @endforeach
-</tbody>
 
 @push('styles')
 <style>
@@ -388,7 +366,7 @@ function updateProgressBar(depoId, percentage, status) {
 // Function to fetch volume from API
 async function fetchVolume() {
     try {
-        const response = await fetch('http://172.16.100.106:8000/api/latest-volume');
+        const response = await fetch('{{ url("/api/latest-volume") }}');
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
