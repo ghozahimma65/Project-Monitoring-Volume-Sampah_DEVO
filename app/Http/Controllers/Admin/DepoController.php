@@ -36,18 +36,19 @@ class DepoController extends Controller
      * Simpan depo baru menggunakan Form Request Validation.
      */
     public function store(DepoRequest $request)
-{
-    $validatedData = 'request'->validated();
-    $data = $this->depoService->prepareDepoData($validatedData);
+    {
+        // PERBAIKAN: Menghapus tanda kutip di sekitar 'request'
+        $validatedData = $request->validated();
+        $data = $this->depoService->prepareDepoData($validatedData);
 
-    // TAMBAHKAN BARIS INI UNTUK MENGINTIP ISI DATA
-    dd($data); 
+        // BARIS DEBUGGING: Ini akan menampilkan isi variabel $data
+        dd($data); 
 
-    // Kode di bawah ini tidak akan dijalankan untuk sementara
-    Depo::create($data);
+        // Kode di bawah ini tidak akan dijalankan untuk sementara
+        Depo::create($data);
 
-    return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil ditambahkan');
-}
+        return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil ditambahkan');
+    }
 
     public function show(Depo $depo)
     {
