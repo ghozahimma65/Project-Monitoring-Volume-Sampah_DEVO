@@ -148,6 +148,38 @@
     @method('DELETE')
 </form>
 
+<thead>
+    <tr>
+        ...
+        <th>Status</th>
+        <th>Kritis Sejak</th> <!-- Kolom Baru -->
+        <th>Aksi</th>
+        ...
+    </tr>
+</thead>
+<tbody>
+    @foreach($depos as $depo)
+    <tr>
+        ...
+        <td>{{ $depo->status_text }}</td>
+        <td>
+            {{-- Tampilkan hanya jika ada waktunya --}}
+            @if($depo->waktu_kritis)
+                {{-- Tampilkan durasi (misal: 2 jam yang lalu) --}}
+                {{ \Carbon\Carbon::parse($depo->waktu_kritis)->diffForHumans() }}
+                <br>
+                {{-- Tampilkan tanggal pastinya --}}
+                <small>({{ \Carbon\Carbon::parse($depo->waktu_kritis)->format('d M Y, H:i') }})</small>
+            @else
+                -
+            @endif
+        </td>
+        <td>... Aksi ...</td>
+        ...
+    </tr>
+    @endforeach
+</tbody>
+
 @push('styles')
 <style>
     .header-section .card {

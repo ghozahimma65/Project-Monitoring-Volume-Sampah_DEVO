@@ -514,6 +514,29 @@
             <div class="d-flex align-items-center gap-3 ms-auto">
                 <span class="text-muted">{{ now()->format('d/m/Y') }}</span>
                 
+                {{-- TAMBAHKAN BLOK NOTIFIKASI DI SINI --}}
+                <!-- Nav Item - Alerts -->
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell fa-fw"></i>
+                        <!-- Counter - Alerts -->
+                        <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" id="notification-count" style="display: none;"></span>
+                    </a>
+                    <!-- Dropdown - Alerts -->
+                    <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" style="width: 350px; border-radius: var(--border-radius);"
+                        aria-labelledby="alertsDropdown">
+                        <h6 class="dropdown-header">
+                            Pusat Notifikasi
+                        </h6>
+                        <div id="notification-list">
+                            <!-- Notifikasi akan diisi oleh JavaScript di sini -->
+                        </div>
+                        <a class="dropdown-item text-center small text-gray-500" href="#">Tandai semua sudah dibaca</a>
+                    </div>
+                </div>
+                {{-- AKHIR BLOK NOTIFIKASI --}}
+
                 <!-- User Menu -->
                 <div class="dropdown">
                     <button class="btn dropdown-toggle d-flex align-items-center" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px;" data-bs-toggle="dropdown">
@@ -714,7 +737,7 @@
         }
 
         function loadNotificationsCount() {
-            fetch('{{ route("admin.notifications") }}')
+            fetch('{{ url("/admin/notifications/latest") }}')
                 .then(response => response.json())
                 .then(notifications => {
                     if (notifications.length > 0) {
@@ -733,7 +756,56 @@
             document.getElementById('last-update').textContent = new Date().toLocaleString('id-ID');
         }, 30000);
     </script>
-    
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     @stack('scripts')
+
+    @push('scripts')
+<script>
+    function loadNotifications() {
+        fetch('{{ route("admin.notifications.latest") }}') // Kita akan buat route ini
+            .then(response => response.json())
+            .then(data => {
+                const countElement = document.getElementById('notification-count');
+                const listElement = document.getElementById('notification-list');
+                
+                listElement.innerHTML = ''; // Kosongkan daftar lama
+
+                if (data.length > 0) {
+                    countElement.innerText = data.length;
+                    countElement.style.display = 'inline';
+
+                    data.forEach(notif => {
+                        const notifItem = `
+                        <a class="dropdown-item d-flex align-items-center" href="${notif.data.url}">
+                            <div class="mr-3">
+                                <div class="icon-circle bg-danger">
+                                    <i class="fas fa-exclamation-triangle text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">${new Date(notif.created_at).toLocaleDateString('id-ID')}</div>
+                                <span class="font-weight-bold">${notif.data.pesan}</span>
+                            </div>
+                        </a>
+                        `;
+                        listElement.innerHTML += notifItem;
+                    });
+                } else {
+                    countElement.style.display = 'none';
+                    listElement.innerHTML = '<span class="dropdown-item text-center small text-gray-500">Tidak ada notifikasi baru</span>';
+                }
+            })
+            .catch(error => console.error('Gagal memuat notifikasi:', error));
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        loadNotifications();
+        // Cek notifikasi baru setiap 30 detik
+        setInterval(loadNotifications, 30000); 
+    });
+</script>
+@endpush
 </body>
 </html>

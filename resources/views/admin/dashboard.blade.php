@@ -7,6 +7,47 @@
 @section('page-title', 'Dashboard Admin')
 
 @section('content')
+{{-- BLOK PERINGATAN (DENGAN ID UNIK DAN POSISI BENAR) --}}
+@if($peringatan->isNotEmpty())
+<div id="abnormal-warning-card" class="card shadow mb-4 border-left-danger" data-aos="fade-down">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            Peringatan Pembacaan Tidak Normal
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Nama Depo</th>
+                        <th>Catatan</th>
+                        <th style="width: 5%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="warning-table-body">
+                    @foreach($peringatan as $item)
+                    <tr>
+                        <td>{{ $item->created_at->diffForHumans() }}</td>
+                        <td>{{ $item->depo->nama_depo }}</td>
+                        <td>{{ $item->catatan }}</td>
+                        <td>
+                            <button onclick="acknowledgeWarning(this, {{ $item->id }})" class="btn btn-sm btn-success" title="Tandai sudah dibaca">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
+{{-- AKHIR BLOK PERINGATAN --}}
+
 
 <!-- Enhanced Quick Stats Cards -->
 <div class="row mb-4">
@@ -932,6 +973,52 @@
 
 @push('scripts')
 <script>
+// FUNGSI BARU UNTUK MENGHILANGKAN PERINGATAN
+function acknowledgeWarning(button, warningId) {
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    button.disabled = true;
+
+    fetch(`/admin/warnings/${warningId}/acknowledge`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const row = button.closest('tr');
+            row.style.transition = 'opacity 0.5s ease';
+            row.style.opacity = '0';
+            setTimeout(() => {
+                row.remove();
+                const tbody = document.querySelector('.warning-table-body');
+                if (tbody && tbody.children.length === 0) {
+                    const warningCard = document.querySelector('#abnormal-warning-card');
+                    if(warningCard) {
+                        warningCard.style.transition = 'all 0.5s ease';
+                        warningCard.style.opacity = '0';
+                        warningCard.style.transform = 'scale(0.95)';
+                        setTimeout(() => warningCard.remove(), 500);
+                    }
+                }
+            }, 500);
+        } else {
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.disabled = false;
+            alert('Gagal menandai peringatan.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.disabled = false;
+        alert('Terjadi kesalahan.');
+    });
+}
+
+// SISA SCRIPT LAMA ANDA
 // Global variables
 let statusChart, volumeChart;
 let realTimeData = {
@@ -942,6 +1029,7 @@ let realTimeData = {
     currentVolume: 0
 };
 
+// ... (sisa fungsi JavaScript Anda yang lain dari file asli) ...
 // Function to determine status based on volume percentage
 function getStatusFromVolume(percentage) {
     if (percentage >= 0 && percentage <= 80) {
@@ -963,8 +1051,6 @@ function updateStatisticsFromVolume(volumePercentage) {
     realTimeData.currentVolume = volumePercentage;
 
     // Determine status for all depos based on current volume
-    // For simulation, we'll assume all depos have the same volume
-    // In real implementation, you'd have individual depo data
     const status = getStatusFromVolume(volumePercentage);
     
     if (status === 'normal') {
@@ -981,7 +1067,6 @@ function updateStatisticsFromVolume(volumePercentage) {
 
 // Function to update statistics display
 function updateStatisticsDisplay() {
-    // Update counter elements
     const totalElement = document.getElementById('total-depo-count');
     const normalElement = document.getElementById('normal-count');
     const warningElement = document.getElementById('warning-count');
@@ -1004,7 +1089,6 @@ function updateStatisticsDisplay() {
         criticalElement.setAttribute('data-counter', realTimeData.critical);
     }
 
-    // Update progress bars
     const total = realTimeData.total;
     if (total > 0) {
         const normalProgress = document.getElementById('normal-progress');
@@ -1015,7 +1099,6 @@ function updateStatisticsDisplay() {
         if (warningProgress) warningProgress.style.width = (realTimeData.warning / total * 100) + '%';
         if (criticalProgress) criticalProgress.style.width = (realTimeData.critical / total * 100) + '%';
 
-        // Update percentages
         const normalPercentageElement = document.getElementById('normal-percentage');
         const warningPercentageElement = document.getElementById('warning-percentage');
         const criticalPercentageElement = document.getElementById('critical-percentage');
@@ -1025,13 +1108,8 @@ function updateStatisticsDisplay() {
         if (criticalPercentageElement) criticalPercentageElement.textContent = (realTimeData.critical / total * 100).toFixed(1) + '%';
     }
 
-    // Update trend indicators
     updateTrendIndicators();
-
-    // Update critical alert
     updateCriticalAlert();
-
-    // Update charts
     if (statusChart) updateStatusChart();
 }
 
@@ -1071,7 +1149,6 @@ function updateCriticalAlert() {
         criticalSection.style.display = 'block';
         if (criticalCountElement) criticalCountElement.textContent = realTimeData.critical;
         
-        // Generate critical depo items dynamically
         if (criticalListElement) {
             criticalListElement.innerHTML = '';
             for (let i = 1; i <= realTimeData.critical; i++) {
@@ -1128,11 +1205,7 @@ function initializeStatusChart() {
             labels: ['Normal', 'Warning', 'Critical'],
             datasets: [{
                 data: [realTimeData.normal, realTimeData.warning, realTimeData.critical],
-                backgroundColor: [
-                    '#28a745', // Normal - Hijau
-                    '#ffc107', // Warning - Kuning
-                    '#dc3545'  // Critical - Merah
-                ],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
                 borderWidth: 0,
                 hoverOffset: 8
             }]
@@ -1146,10 +1219,7 @@ function initializeStatusChart() {
                     labels: {
                         padding: 20,
                         usePointStyle: true,
-                        font: {
-                            size: 12,
-                            weight: 600
-                        }
+                        font: { size: 12, weight: 600 }
                     }
                 },
                 tooltip: {
@@ -1202,34 +1272,16 @@ function initializeVolumeChart() {
                 y: {
                     beginAtZero: true,
                     max: 100,
-                    title: {
-                        display: true,
-                        text: 'Volume (%)',
-                        font: {
-                            size: 12,
-                            weight: 600
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    }
+                    title: { display: true, text: 'Volume (%)', font: { size: 12, weight: 600 } },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' }
                 },
                 x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        maxRotation: 45,
-                        font: {
-                            size: 11
-                        }
-                    }
+                    grid: { display: false },
+                    ticks: { maxRotation: 45, font: { size: 11 } }
                 }
             },
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -1249,34 +1301,31 @@ function initializeVolumeChart() {
 // Update volume chart with real-time data
 async function updateVolumeChart() {
     try {
-        const response = await fetch('http://172.16.100.106:8000/api/latest-volume');
+        // URL SUDAH DIPERBAIKI
+        const response = await fetch('{{ url("/api/latest-volume") }}');
         if (!response.ok) throw new Error('Network response was not ok');
         
         const data = await response.json();
         const volume = parseFloat(data.volume);
         
-        // Update realtime data
         updateStatisticsFromVolume(volume);
         
-        // Generate sample data for multiple depos (in real scenario, this would come from API)
         const labels = [];
         const volumes = [];
         const colors = [];
         
         for (let i = 1; i <= realTimeData.total; i++) {
             labels.push(`Depo ${i}`);
-            // In real scenario, each depo would have different volumes
-            // For demo, we'll add some variation
-            const depoVolume = volume + (Math.random() * 10 - 5); // Add ±5% variation
+            const depoVolume = volume + (Math.random() * 10 - 5);
             const clampedVolume = Math.max(0, Math.min(100, depoVolume));
             volumes.push(clampedVolume);
             
             if (clampedVolume >= 90) {
-                colors.push('#ff6b6b'); // Critical
+                colors.push('#ff6b6b');
             } else if (clampedVolume > 80) {
-                colors.push('#f093fb'); // Warning
+                colors.push('#f093fb');
             } else {
-                colors.push('#11998e'); // Normal
+                colors.push('#11998e');
             }
         }
         
@@ -1359,11 +1408,9 @@ function updateTime() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize charts
     initializeStatusChart();
     initializeVolumeChart();
     
-    // Set initial statistics based on current data
     const initialNormal = {{ $statistics['normal'] }};
     const initialWarning = {{ $statistics['warning'] }};
     const initialCritical = {{ $statistics['critical'] }};
@@ -1372,22 +1419,12 @@ document.addEventListener('DOMContentLoaded', function() {
     realTimeData.warning = initialWarning;
     realTimeData.critical = initialCritical;
     
-    // Update display
     updateStatisticsDisplay();
-    
-    // Animate counters on load
     setTimeout(animateCounters, 500);
-    
-    // Update volume chart initially
     updateVolumeChart();
-    
-    // Update time every second
     setInterval(updateTime, 1000);
-    
-    // Auto refresh volume chart and statistics every 1 second
     setInterval(updateVolumeChart, 1000);
     
-    // Initialize AOS animations
     if (typeof AOS !== 'undefined') {
         AOS.init({
             duration: 600,

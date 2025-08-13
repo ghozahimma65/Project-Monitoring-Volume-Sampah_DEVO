@@ -118,32 +118,87 @@ class Depo extends Model
     }
 
     public function updateVolumeStatus()
-    {
-        $this->persentase_volume = number_format((($this->volume_saat_ini / $this->volume_maksimal) * 100), 2, '.', '');
-        
-        if ($this->persentase_volume >= 90) {
-            $this->status = 'critical';
-            $this->led_status = true;
-        } elseif ($this->persentase_volume >= 80) {
-            $this->status = 'warning';
-            $this->led_status = false;
-        } else {
-            $this->status = 'normal';
-            $this->led_status = false;
+{
+    if ($this->persentase_volume >= 90) {
+    // ...
+    if (is_null($this->waktu_kritis)) {
+        $this->waktu_kritis = now();
+
+        $admins = User::where('is_admin', true)->get();
+        if ($admins->isNotEmpty()) {
+            foreach ($admins as $admin) {
+                // Baris ini yang memicu notifikasi
+                $admin->notify(new DepoCriticalNotification($this));
+            }
+        }
+    }
+}
+    // Ambil persentase volume terakhir yang valid untuk perbandingan
+    $persentaseTerakhir = $this->persentase_volume;
+    $persentaseBaru = number_format((($this->volume_saat_ini / $this->volume_maksimal) * 100), 2, '.', '');
+
+    // --- LOGIKA PENGECEKAN DATA ANEH ---
+    $isAbnormal = false;
+    $catatanAbnormal = '';
+
+    // Aturan 1: Nilai negatif atau di atas 100%
+    if ($persentaseBaru < 0 || $persentaseBaru > 100) {
+        $isAbnormal = true;
+        $catatanAbnormal = "Nilai tidak wajar: {$persentaseBaru}%.";
+    }
+    // Aturan 2: Perubahan drastis (misal > 50% dalam satu waktu)
+    else if (abs($persentaseBaru - $persentaseTerakhir) > 50) {
+        $isAbnormal = true;
+        $catatanAbnormal = "Perubahan drastis dari {$persentaseTerakhir}% menjadi {$persentaseBaru}%.";
+    }
+
+    if ($isAbnormal) {
+        // Catat ke buku catatan kita
+        \App\Models\AbnormalReading::create([
+            'depo_id' => $this->id,
+            'nilai_terbaca' => $this->volume_saat_ini, // Catat nilai asli dari sensor
+            'catatan' => $catatanAbnormal,
+        ]);
+
+        // PENTING: Jangan lanjutkan proses, agar data aneh tidak disimpan
+        return; 
+    }
+    // --- AKHIR LOGIKA PENGECEKAN ---
+
+    // Jika data normal, lanjutkan proses seperti biasa
+    $this->persentase_volume = $persentaseBaru;
+    
+    if ($this->persentase_volume >= 90) {
+        $this->status = 'critical';
+        $this->led_status = true;
+
+        if (is_null($this->waktu_kritis)) {
+            $this->waktu_kritis = now();
         }
 
-        $this->last_updated = now();
-        $this->save();
-
-        // Save to history
-        VolumeHistory::create([
-            'depo_id' => $this->id,
-            'volume' => $this->volume_saat_ini,
-            'persentase' => $this->persentase_volume,
-            'status' => $this->status,
-            'recorded_at' => now(),
-        ]);
+    } elseif ($this->persentase_volume >= 80) {
+        $this->status = 'warning';
+        $this->led_status = false;
+        $this->waktu_kritis = null;
+    } else {
+        $this->status = 'normal';
+        $this->led_status = false;
+        $this->waktu_kritis = null;
     }
+
+    $this->last_updated = now();
+    $this->save();
+
+    // Save to history
+    \App\Models\VolumeHistory::create([
+        'depo_id' => $this->id,
+        'volume' => $this->volume_saat_ini,
+        'persentase' => $this->persentase_volume,
+        'status' => $this->status,
+        'recorded_at' => now(),
+        
+    ]);
+}
 
     public function getLatestReadings($limit = 100)
     {

@@ -27,7 +27,11 @@ class AdminDashboardController extends Controller
         $criticalDepos = Depo::where('status', 'critical')->where('is_active', true)->get();
         $recentReports = Report::with('depo')->orderBy('created_at', 'desc')->limit(5)->get();
         $notifications = $this->notificationService->getUnreadNotifications('admin');
-
+        $peringatan = \App\Models\AbnormalReading::whereNull('acknowledged_at')
+                                         ->with('depo')
+                                         ->latest()
+                                         ->take(5)
+                                         ->get();
         $volumeData = Depo::where('is_active', true)->get()->map(function($depo) {
             return [
                 'name' => $depo->nama_depo,
@@ -42,14 +46,14 @@ class AdminDashboardController extends Controller
             'critical' => $statistics['critical'],
         ];
 
-        return view('admin.dashboard', compact(
-            'statistics', 
-            'criticalDepos', 
-            'recentReports', 
-            'notifications',
-            'volumeData',
-            'statusDistribution'
-        ));
+        return view('admin.dashboard', [
+        'statistics' => $statistics,
+        'criticalDepos' => $criticalDepos,
+        'recentReports' => $recentReports,
+        'notifications' => $notifications,
+        'volumeData' => $volumeData,
+        'peringatan' => $peringatan,
+        ]);
     }
 
     public function notifications()

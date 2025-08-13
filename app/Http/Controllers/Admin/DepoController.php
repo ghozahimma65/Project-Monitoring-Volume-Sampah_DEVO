@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Depo;
+// Kembali menggunakan DepoRequest untuk konsistensi
+use App\Http\Requests\DepoRequest;
 use App\Services\DepoCalculationService;
 use App\Services\SensorService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class DepoController extends Controller
 {
@@ -16,15 +17,13 @@ class DepoController extends Controller
 
     public function __construct(DepoCalculationService $depoService, SensorService $sensorService)
     {
-        // REMOVE middleware call - it's handled by routes
         $this->depoService = $depoService;
         $this->sensorService = $sensorService;
     }
 
-    // ... rest of methods stay the same
     public function index()
     {
-        $depos = Depo::all(); // Simplified to avoid relation issues
+        $depos = Depo::all();
         return view('admin.depos.index', compact('depos'));
     }
 
@@ -33,31 +32,28 @@ class DepoController extends Controller
         return view('admin.depos.create');
     }
 
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'nama_depo' => 'required|string|max:255',
-            'lokasi' => 'required|string',
-            'panjang' => 'required|numeric|min:1|max:50',
-            'lebar' => 'required|numeric|min:1|max:50',
-            'tinggi' => 'required|numeric|min:1|max:10',
-        ]);
+    /**
+     * Simpan depo baru menggunakan Form Request Validation.
+     */
+    public function store(DepoRequest $request)
+{
+    $validatedData = 'request'->validated();
+    $data = $this->depoService->prepareDepoData($validatedData);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+    // TAMBAHKAN BARIS INI UNTUK MENGINTIP ISI DATA
+    dd($data); 
 
-        $data = $this->depoService->prepareDepoData($request->all());
-        $depo = Depo::create($data);
+    // Kode di bawah ini tidak akan dijalankan untuk sementara
+    Depo::create($data);
 
-        return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil ditambahkan');
-    }
+    return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil ditambahkan');
+}
 
     public function show(Depo $depo)
     {
-        $sensorHealth = []; // Simplified for now
-        $recentReadings = []; // Simplified for now  
-        $estimatedFull = null; // Simplified for now
+        $sensorHealth = [];
+        $recentReadings = [];
+        $estimatedFull = null;
 
         return view('admin.depos.show', compact('depo', 'sensorHealth', 'recentReadings', 'estimatedFull'));
     }
@@ -67,27 +63,19 @@ class DepoController extends Controller
         return view('admin.depos.edit', compact('depo'));
     }
 
-    public function update(Request $request, Depo $depo)
+
+    /**
+     * Update depo menggunakan Form Request Validation.
+     */
+    public function update(DepoRequest $request, Depo $depo) // Menggunakan DepoRequest
     {
-        $validator = Validator::make($request->all(), [
-            'nama_depo' => 'required|string|max:255',
-            'lokasi' => 'required|string',
-            'panjang' => 'required|numeric|min:1|max:50',
-            'lebar' => 'required|numeric|min:1|max:50',
-            'tinggi' => 'required|numeric|min:1|max:10',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $data = $this->depoService->prepareDepoData($request->all());
+        $validatedData = $request->validated();
+        $data = $this->depoService->prepareDepoData($validatedData);
         $depo->update($data);
 
         return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil diperbarui');
     }
 
-    // Method untuk nonaktifkan
     public function deactivate(Depo $depo)
     {
         $depo->update(['is_active' => false]);
@@ -102,14 +90,12 @@ class DepoController extends Controller
         return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil dinonaktifkan');
     }
 
-    // Method untuk hapus permanen - FIXED
     public function destroy(Depo $depo)
     {
         try {
             $depoName = $depo->nama_depo;
             $depo->delete();
             
-            // Handle AJAX requests
             if (request()->wantsJson()) {
                 return response()->json([
                     'success' => true,
@@ -117,10 +103,9 @@ class DepoController extends Controller
                 ]);
             }
             
-            // Handle regular form submissions
             return redirect()->route('admin.depos.index')
-                           ->with('success', "Depo '{$depoName}' berhasil dihapus permanen");
-                           
+                            ->with('success', "Depo '{$depoName}' berhasil dihapus permanen");
+                            
         } catch (\Exception $e) {
             \Log::error('Error deleting depo: ' . $e->getMessage());
             
@@ -132,25 +117,25 @@ class DepoController extends Controller
             }
             
             return redirect()->route('admin.depos.index')
-                           ->with('error', 'Gagal menghapus depo: ' . $e->getMessage());
+                            ->with('error', 'Gagal menghapus depo: ' . $e->getMessage());
         }
     }
 
     public function previewCalculation(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validatedData = $request->validate([
             'panjang' => 'required|numeric|min:1|max:50',
             'lebar' => 'required|numeric|min:1|max:50',
             'tinggi' => 'required|numeric|min:1|max:10',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
+        $panjang = $validatedData['panjang'];
+        $lebar = $validatedData['lebar'];
+        $tinggi = $validatedData['tinggi'];
 
-        $sensorCount = $this->depoService->calculateSensorCount($request->panjang, $request->lebar);
+        $sensorCount = $this->depoService->calculateSensorCount($panjang, $lebar);
         $espCount = $this->depoService->calculateEspCount($sensorCount);
-        $maxVolume = $this->depoService->calculateMaxVolume($request->panjang, $request->lebar, $request->tinggi);
+        $maxVolume = $this->depoService->calculateMaxVolume($panjang, $lebar, $tinggi);
 
         return response()->json([
             'success' => true,
@@ -158,10 +143,9 @@ class DepoController extends Controller
                 'jumlah_sensor' => $sensorCount,
                 'jumlah_esp' => $espCount,
                 'volume_maksimal' => $maxVolume,
-                'area_coverage' => $request->panjang * $request->lebar,
+                'area_coverage' => $panjang * $lebar,
                 'sensor_per_esp' => min(4, $sensorCount),
             ],
         ]);
     }
-    
 }

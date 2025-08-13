@@ -143,6 +143,37 @@
     </div>
 </div>
 
+{{-- Cari card "Informasi Depo" --}}
+<div class="card">
+    <div class="card-header">
+        Informasi Depo
+    </div>
+    <div class="card-body">
+        {{-- ... baris untuk Nama Depo, Lokasi, Dimensi, Kapasitas ... --}}
+
+        <div class="row mb-3">
+            <div class="col-sm-4"><strong>Status:</strong></div>
+            <div class="col-sm-8">
+                <span class="badge bg-danger">{{ $depo->status_text ?? 'Critical' }}</span>
+            </div>
+        </div>
+
+        {{-- PINDAHKAN BLOK KODE KE SINI --}}
+        @if($depo->waktu_kritis)
+        <div class="row mb-3">
+            <div class="col-sm-4"><strong>Kritis Sejak:</strong></div>
+            <div class="col-sm-8">
+                {{ \Carbon\Carbon::parse($depo->waktu_kritis)->diffForHumans() }}
+                <br>
+                <small>({{ \Carbon\Carbon::parse($depo->waktu_kritis)->format('d M Y, H:i') }})</small>
+            </div>
+        </div>
+        @endif
+        {{-- AKHIR BLOK KODE --}}
+
+    </div>
+</div>
+
 @push('styles')
 <style>
     .card {
