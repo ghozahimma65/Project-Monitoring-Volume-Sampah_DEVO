@@ -36,7 +36,7 @@ class DepoController extends Controller
         $validatedData = $request->validated();
         $data = $this->depoService->prepareDepoData($validatedData);
 
-        // PERBAIKAN: Tambahkan nilai default untuk volume saat depo baru dibuat
+        // Memastikan depo baru selalu dibuat dengan volume 0
         $data['volume_saat_ini'] = 0;
         $data['persentase_volume'] = 0;
         $data['status'] = 'normal';
@@ -48,11 +48,7 @@ class DepoController extends Controller
 
     public function show(Depo $depo)
     {
-        $sensorHealth = [];
-        $recentReadings = [];
-        $estimatedFull = null;
-
-        return view('admin.depos.show', compact('depo', 'sensorHealth', 'recentReadings', 'estimatedFull'));
+        return view('admin.depos.show', compact('depo'));
     }
 
     public function edit(Depo $depo)
@@ -69,36 +65,20 @@ class DepoController extends Controller
         return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil diperbarui');
     }
 
-    public function deactivate(Depo $depo)
-    {
-        $depo->update(['is_active' => false]);
-        
-        if (request()->wantsJson()) {
-            return response()->json(['success' => true, 'message' => 'Depo berhasil dinonaktifkan']);
-        }
-        
-        return redirect()->route('admin.depos.index')->with('success', 'Depo berhasil dinonaktifkan');
-    }
-
     public function destroy(Depo $depo)
     {
         try {
-            $depoName = $depo->nama_depo;
             $depo->delete();
-            
             if (request()->wantsJson()) {
-                return response()->json(['success' => true, 'message' => "Depo '{$depoName}' berhasil dihapus permanen"]);
+                return response()->json(['success' => true, 'message' => "Depo '{$depo->nama_depo}' berhasil dihapus."]);
             }
-            
-            return redirect()->route('admin.depos.index')->with('success', "Depo '{$depoName}' berhasil dihapus permanen");
+            return redirect()->route('admin.depos.index')->with('success', "Depo '{$depo->nama_depo}' berhasil dihapus.");
         } catch (\Exception $e) {
             \Log::error('Error deleting depo: ' . $e->getMessage());
-            
             if (request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Gagal menghapus depo: ' . $e->getMessage()], 500);
+                return response()->json(['success' => false, 'message' => 'Gagal menghapus depo.'], 500);
             }
-            
-            return redirect()->route('admin.depos.index')->with('error', 'Gagal menghapus depo: ' . $e->getMessage());
+            return redirect()->route('admin.depos.index')->with('error', 'Gagal menghapus depo.');
         }
     }
     
@@ -125,7 +105,6 @@ class DepoController extends Controller
                 'jumlah_esp' => $espCount,
                 'volume_maksimal' => $maxVolume,
                 'area_coverage' => $panjang * $lebar,
-                'sensor_per_esp' => min(4, $sensorCount),
             ],
         ]);
     }
@@ -136,7 +115,7 @@ class DepoController extends Controller
     public function getRealtimeVolumes()
     {
         $volumes = Depo::where('is_active', true)
-                       ->pluck('persentase_volume', 'id');
+                       ->get(['id', 'persentase_volume', 'volume_saat_ini', 'volume_maksimal', 'status', 'updated_at']);
         
         return response()->json($volumes);
     }

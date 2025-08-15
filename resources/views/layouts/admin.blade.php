@@ -515,22 +515,19 @@
                 <span class="text-muted">{{ now()->format('d/m/Y') }}</span>
                 
                 {{-- TAMBAHKAN BLOK NOTIFIKASI DI SINI --}}
-                <!-- Nav Item - Alerts -->
                 <div class="dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="position: relative;">
                         <i class="fas fa-bell fa-fw"></i>
-                        <!-- Counter - Alerts -->
-                        <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" id="notification-count" style="display: none;"></span>
+                        <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" id="notification-count" style="display: none; font-size: 0.6em; padding: .35em .55em;"></span>
                     </a>
-                    <!-- Dropdown - Alerts -->
                     <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" style="width: 350px; border-radius: var(--border-radius);"
                         aria-labelledby="alertsDropdown">
                         <h6 class="dropdown-header">
                             Pusat Notifikasi
                         </h6>
                         <div id="notification-list">
-                            <!-- Notifikasi akan diisi oleh JavaScript di sini -->
+                            {{-- Diisi oleh JavaScript --}}
                         </div>
                         <a class="dropdown-item text-center small text-gray-500" href="#">Tandai semua sudah dibaca</a>
                     </div>
@@ -604,6 +601,9 @@
     <script>
         let isMenuOpen = false;
 
+
+
+        
         // Initialize AOS
         AOS.init({
             duration: 600,

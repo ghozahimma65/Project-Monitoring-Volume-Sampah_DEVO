@@ -67,4 +67,15 @@ class AdminDashboardController extends Controller
         $this->notificationService->markAllAsRead('admin');
         return response()->json(['success' => true]);
     }
+    public function getDashboardStats()
+{
+    $statistics = $this->depoService->getDepoStatistics();
+    $criticalDepos = \App\Models\Depo::where('status', 'critical')->where('is_active', true)
+                                    ->get(['id', 'nama_depo', 'lokasi', 'persentase_volume']);
+
+    return response()->json([
+        'statistics' => $statistics,
+        'critical_depos' => $criticalDepos,
+    ]);
+}
 }

@@ -7,6 +7,26 @@
 @section('page-title', 'Dashboard Admin')
 
 @section('content')
+{{-- KARTU ALERT DEPO KRITIS (DIKONTROL OLEH JAVASCRIPT) --}}
+<div class="row mb-4" id="critical-alert-section" style="display: none;">
+    <div class="col-12">
+        <div class="alert alert-danger alert-modern" data-aos="fade-up">
+            <div class="alert-header">
+                <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="alert-content">
+                    <h5>Depo Critical - Perlu Perhatian Segera!</h5>
+                    <p class="mb-0"><span id="critical-depo-count">0</span> depo memerlukan tindakan segera</p>
+                </div>
+            </div>
+            <div class="row mt-3" id="critical-depos-list">
+                {{-- Bagian ini akan diisi oleh JavaScript --}}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 {{-- BLOK PERINGATAN (DENGAN ID UNIK DAN POSISI BENAR) --}}
 @if($peringatan->isNotEmpty())
 <div id="abnormal-warning-card" class="card shadow mb-4 border-left-danger" data-aos="fade-down">
@@ -1299,46 +1319,67 @@ function initializeVolumeChart() {
 }
 
 // Update volume chart with real-time data
-async function updateVolumeChart() {
+async function refreshDashboardData() {
     try {
-        // URL SUDAH DIPERBAIKI
-        const response = await fetch('{{ url("/api/latest-volume") }}');
-        if (!response.ok) throw new Error('Network response was not ok');
-        
+        const response = await fetch('{{ route("admin.dashboard.stats") }}');
+        if (!response.ok) return;
+
         const data = await response.json();
-        const volume = parseFloat(data.volume);
         
-        updateStatisticsFromVolume(volume);
+        // 1. Update Kartu Statistik Utama
+        const stats = data.statistics;
+        document.getElementById('total-depo-count').textContent = stats.total_depo;
+        document.getElementById('normal-count').textContent = stats.normal;
+        document.getElementById('warning-count').textContent = stats.warning;
+        document.getElementById('critical-count').textContent = stats.critical;
         
-        const labels = [];
-        const volumes = [];
-        const colors = [];
-        
-        for (let i = 1; i <= realTimeData.total; i++) {
-            labels.push(`Depo ${i}`);
-            const depoVolume = volume + (Math.random() * 10 - 5);
-            const clampedVolume = Math.max(0, Math.min(100, depoVolume));
-            volumes.push(clampedVolume);
-            
-            if (clampedVolume >= 90) {
-                colors.push('#ff6b6b');
-            } else if (clampedVolume > 80) {
-                colors.push('#f093fb');
-            } else {
-                colors.push('#11998e');
-            }
+        const total = stats.total_depo;
+        if (total > 0) {
+            document.getElementById('normal-progress').style.width = (stats.normal / total * 100) + '%';
+            document.getElementById('warning-progress').style.width = (stats.warning / total * 100) + '%';
+            document.getElementById('critical-progress').style.width = (stats.critical / total * 100) + '%';
+            document.getElementById('normal-percentage').textContent = (stats.normal / total * 100).toFixed(1) + '%';
+            document.getElementById('warning-percentage').textContent = (stats.warning / total * 100).toFixed(1) + '%';
+            document.getElementById('critical-percentage').textContent = (stats.critical / total * 100).toFixed(1) + '%';
         }
-        
-        if (volumeChart) {
-            volumeChart.data.labels = labels;
-            volumeChart.data.datasets[0].data = volumes;
-            volumeChart.data.datasets[0].backgroundColor = colors;
-            volumeChart.update('active');
+
+        // 2. Update Kartu Peringatan Depo Kritis
+        const criticalDepos = data.critical_depos;
+        const criticalSection = document.getElementById('critical-alert-section');
+        const criticalCountElement = document.getElementById('critical-depo-count');
+        const criticalListElement = document.getElementById('critical-depos-list');
+
+        if (criticalDepos.length > 0) {
+            criticalCountElement.textContent = criticalDepos.length;
+            criticalListElement.innerHTML = '';
+
+            criticalDepos.forEach(depo => {
+                const depoItemHTML = `
+                    <div class="col-md-4 mb-2">
+                        <div class="critical-depo-item">
+                            <div class="depo-info">
+                                <div class="depo-name">${depo.nama_depo}</div>
+                                <div class="depo-location">${depo.lokasi}</div>
+                            </div>
+                            <div class="depo-actions">
+                                <span class="critical-badge">${parseFloat(depo.persentase_volume).toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                criticalListElement.innerHTML += depoItemHTML;
+            });
+
+            criticalSection.style.display = 'block';
+        } else {
+            criticalSection.style.display = 'none';
         }
+
     } catch (error) {
-        console.error('Error updating volume chart:', error);
+        console.warn('Gagal me-refresh data dashboard:', error);
     }
 }
+
 
 // Refresh functions
 function refreshChart(type) {

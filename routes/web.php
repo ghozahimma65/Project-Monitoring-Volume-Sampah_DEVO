@@ -25,8 +25,9 @@ use App\Http\Controllers\Admin\NotificationController;
 Route::get('/', [PublicDashboardController::class, 'index'])->name('dashboard');
 Route::get('/depo/{depo}', [PublicDashboardController::class, 'show'])->name('depo.detail');
 Route::get('/api/dashboard', [PublicDashboardController::class, 'api'])->name('api.dashboard');
-Route::get('/api/depo/{depo}/chart', [PublicDashboardController::class, 'getChartData'])->name('api.depo.chart');
+Route::get('/api/depo/{depo}/chart', [PublicController::class, 'getChartData'])->name('api.depo.chart');
 Route::get('/about', function () { return view('public.about'); })->name('about');
+Route::get('/depos/realtime-volumes', [DepoController::class, 'getRealtimeVolumes'])->name('depos.realtime-volumes');
 
 // Public Report Routes
 Route::prefix('laporan')->name('report.')->group(function () {
@@ -46,7 +47,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 // == ADMIN ROUTES (SEMUA DI DALAM SATU GRUP YANG BENAR) ==
 // PERUBAHAN UTAMA: Memanggil class middleware secara langsung
 Route::middleware(['auth', \App\Http\Middleware\AdminAuth::class])->prefix('admin')->name('admin.')->group(function () {
-  
+Route::get('/dashboard-stats', [AdminDashboardController::class, 'getDashboardStats'])->name('dashboard.stats');  
     // Dashboard
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     

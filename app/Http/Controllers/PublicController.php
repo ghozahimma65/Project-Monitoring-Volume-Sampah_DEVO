@@ -2,7 +2,8 @@
 // Di controller dashboard Anda (misal PublicController.php)
 
 use App\Services\NotificationService;
-
+use App\Models\Depo;
+use Carbon\Carbon;
 class PublicController extends Controller
 {
     protected $notificationService;
@@ -35,5 +36,31 @@ class PublicController extends Controller
         }
 
         return view('public.dashboard', compact('depos', 'statistics'));
+    }
+    public function getChartData(Depo $depo)
+{
+    // Ambil data histori volume dari 24 jam terakhir
+    $history = $depo->volumeHistory()
+                    ->where('recorded_at', '>=', Carbon::now()->subHours(24))
+                    
+                    // INI BAGIAN PENTING: Hanya ambil data yang nilainya lebih dari 0
+                    ->where('persentase', '>', 0) 
+                    
+                    ->orderBy('recorded_at', 'asc')
+                    ->get();
+
+    // Siapkan data untuk dikirim ke grafik
+    $labels = $history->map(function ($item) {
+        return Carbon::parse($item->recorded_at)->format('H:i'); // Format waktu (Jam:Menit)
+    });
+
+    $data = $history->map(function ($item) {
+        return $item->persentase; // Ambil nilai persentasenya
+    });
+
+    return response()->json([
+        'labels' => $labels,
+        'data' => $data,
+    ]);
     }
 }
