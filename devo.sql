@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 13, 2025 at 04:32 AM
+-- Generation Time: Aug 15, 2025 at 03:37 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,7 +45,10 @@ INSERT INTO `abnormal_readings` (`id`, `depo_id`, `nilai_terbaca`, `catatan`, `a
 (1, 1, '95', 'Perubahan drastis dari 9.92% menjadi 94.25%.', '2025-08-11 22:58:01', '2025-08-11 20:40:49', '2025-08-11 22:58:01'),
 (2, 1, '95', 'Perubahan drastis dari 4.96% menjadi 94.25%.', '2025-08-12 00:34:12', '2025-08-12 00:33:26', '2025-08-12 00:34:12'),
 (3, 1, '96', 'Perubahan drastis dari 0.00% menjadi 95.24%.', '2025-08-12 00:44:03', '2025-08-12 00:40:10', '2025-08-12 00:44:03'),
-(4, 1, '96', 'Perubahan drastis dari 0.00% menjadi 95.24%.', '2025-08-12 18:54:26', '2025-08-12 18:52:51', '2025-08-12 18:54:26');
+(4, 1, '96', 'Perubahan drastis dari 0.00% menjadi 95.24%.', '2025-08-12 18:54:26', '2025-08-12 18:52:51', '2025-08-12 18:54:26'),
+(5, 1, '85', 'Perubahan drastis dari 0.00% menjadi 84.33%.', '2025-08-12 20:47:57', '2025-08-12 20:38:41', '2025-08-12 20:47:57'),
+(6, 1, '95', 'Perubahan drastis dari 0.00% menjadi 94.25%.', '2025-08-12 20:47:55', '2025-08-12 20:39:20', '2025-08-12 20:47:55'),
+(7, 1, '95', 'Perubahan drastis dari 0.00% menjadi 94.25%.', '2025-08-12 21:31:17', '2025-08-12 21:11:40', '2025-08-12 21:31:17');
 
 -- --------------------------------------------------------
 
@@ -105,7 +108,10 @@ CREATE TABLE `depos` (
 INSERT INTO `depos` (`id`, `nama_depo`, `lokasi`, `panjang`, `lebar`, `tinggi`, `jumlah_sensor`, `jumlah_esp`, `volume_maksimal`, `volume_saat_ini`, `persentase_volume`, `status`, `waktu_kritis`, `led_status`, `last_updated`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, 'Depo Merah', 'Jl. Sudirman No. 12, Jakarta Pusat', 7.00, 4.50, 3.20, 4, 2, 100.80, 0.00, 0.00, 'normal', NULL, 0, '2025-08-12 00:38:36', 1, '2025-08-11 00:56:24', '2025-08-12 00:38:36'),
 (2, 'Depo Kuning', 'Jl. Thamrin No. 89, Jakarta Barat', 6.00, 5.00, 3.00, 4, 2, 90.00, 84.60, 94.00, 'critical', NULL, 1, '2025-08-11 00:56:25', 1, '2025-08-11 00:56:24', '2025-08-11 00:56:25'),
-(3, 'Depo Hijau', 'Jl. Gatot Subroto No. 45, Jakarta Selatan', 8.00, 5.00, 3.50, 6, 3, 140.00, 128.80, 92.00, 'critical', NULL, 1, '2025-08-11 00:56:26', 1, '2025-08-11 00:56:24', '2025-08-11 00:56:26');
+(3, 'Depo Hijau', 'Jl. Gatot Subroto No. 45, Jakarta Selatan', 8.00, 5.00, 3.50, 6, 3, 140.00, 128.80, 92.00, 'critical', NULL, 1, '2025-08-11 00:56:26', 1, '2025-08-11 00:56:24', '2025-08-11 00:56:26'),
+(4, 'Depo Kartoharjo', 'Jl. Halmahera No. 84 B Kota Madiun', 10.00, 5.00, 10.00, 13, 4, 500.00, 0.00, 0.00, 'normal', NULL, 0, NULL, 1, '2025-08-12 19:40:36', '2025-08-12 20:58:32'),
+(6, 'Depo Balung', 'Jl. Ir Jendral Wito', 5.00, 5.00, 5.00, 7, 2, 125.00, 0.00, 0.00, 'normal', NULL, 0, NULL, 1, '2025-08-13 00:09:41', '2025-08-13 00:09:41'),
+(7, 'Depo Madiun', 'Jl. Doho', 10.00, 15.00, 10.00, 38, 10, 1500.00, 0.00, 0.00, 'normal', NULL, 0, NULL, 1, '2025-08-14 00:32:29', '2025-08-14 00:32:29');
 
 -- --------------------------------------------------------
 
@@ -249,7 +255,7 @@ CREATE TABLE `reports` (
 
 INSERT INTO `reports` (`id`, `report_id`, `depo_id`, `tanggal_laporan`, `kategori`, `deskripsi`, `status`, `admin_response`, `resolved_at`, `created_at`, `updated_at`) VALUES
 (1, 'RPT-2025-001', 1, '2025-08-06', 'overload', 'Volume melebihi kapasitas maksimal.', 'resolved', NULL, '2025-08-11 01:05:21', '2025-08-06 00:56:26', '2025-08-11 01:05:21'),
-(2, 'RPT-2025-002', 1, '2025-08-08', 'kerusakan_sensor', 'Sensor tidak mengirim data.', 'resolved', NULL, '2025-08-11 20:00:30', '2025-08-08 00:56:26', '2025-08-11 20:00:30'),
+(2, 'RPT-2025-002', 1, '2025-08-08', 'kerusakan_sensor', 'Sensor tidak mengirim data.', 'resolved', NULL, '2025-08-13 00:29:20', '2025-08-08 00:56:26', '2025-08-13 00:29:20'),
 (3, 'RPT-2025-003', 3, '2025-08-01', 'sampah_berserakan', 'Sampah ditemukan di luar depo.', 'resolved', NULL, '2025-08-11 19:30:33', '2025-08-01 00:56:26', '2025-08-11 19:30:33');
 
 -- --------------------------------------------------------
@@ -921,7 +927,47 @@ INSERT INTO `volume_history` (`id`, `depo_id`, `volume`, `persentase`, `status`,
 (349, 1, 100.00, 99.21, 'critical', '2025-08-11 20:10:42'),
 (350, 1, 10.00, 9.92, 'normal', '2025-08-11 20:13:34'),
 (351, 1, 5.00, 4.96, 'normal', '2025-08-12 00:31:57'),
-(352, 1, 0.00, 0.00, 'normal', '2025-08-12 00:38:36');
+(352, 1, 0.00, 0.00, 'normal', '2025-08-12 00:38:36'),
+(353, 3, 52.00, 70.00, 'normal', '2025-08-13 14:57:29'),
+(354, 3, 38.00, 28.00, 'normal', '2025-08-13 15:57:29'),
+(355, 3, 14.00, 54.00, 'normal', '2025-08-13 16:57:29'),
+(356, 3, 69.00, 11.00, 'normal', '2025-08-13 17:57:29'),
+(357, 3, 37.00, 39.00, 'normal', '2025-08-13 18:57:29'),
+(358, 3, 58.00, 60.00, 'normal', '2025-08-13 19:57:29'),
+(359, 3, 31.00, 15.00, 'normal', '2025-08-13 20:57:29'),
+(360, 3, 14.00, 60.00, 'normal', '2025-08-13 21:57:29'),
+(361, 3, 60.00, 50.00, 'normal', '2025-08-13 22:57:29'),
+(362, 3, 35.00, 42.00, 'normal', '2025-08-13 23:57:29'),
+(363, 3, 26.00, 15.00, 'normal', '2025-08-13 15:02:38'),
+(364, 3, 74.00, 59.00, 'normal', '2025-08-13 16:02:38'),
+(365, 3, 33.00, 41.00, 'normal', '2025-08-13 17:02:38'),
+(366, 3, 11.00, 38.00, 'normal', '2025-08-13 18:02:38'),
+(367, 3, 69.00, 47.00, 'normal', '2025-08-13 19:02:38'),
+(368, 3, 65.00, 40.00, 'normal', '2025-08-13 20:02:38'),
+(369, 3, 45.00, 52.00, 'normal', '2025-08-13 21:02:38'),
+(370, 3, 24.00, 11.00, 'normal', '2025-08-13 22:02:38'),
+(371, 3, 50.00, 34.00, 'normal', '2025-08-13 23:02:38'),
+(372, 3, 29.00, 58.00, 'normal', '2025-08-14 00:02:38'),
+(373, 3, 60.00, 79.00, 'normal', '2025-08-13 15:03:41'),
+(374, 3, 54.00, 60.00, 'normal', '2025-08-13 16:03:41'),
+(375, 3, 77.00, 35.00, 'normal', '2025-08-13 17:03:41'),
+(376, 3, 79.00, 40.00, 'normal', '2025-08-13 18:03:41'),
+(377, 3, 47.00, 63.00, 'normal', '2025-08-13 19:03:41'),
+(378, 3, 15.00, 18.00, 'normal', '2025-08-13 20:03:41'),
+(379, 3, 42.00, 40.00, 'normal', '2025-08-13 21:03:41'),
+(380, 3, 30.00, 18.00, 'normal', '2025-08-13 22:03:41'),
+(381, 3, 55.00, 61.00, 'normal', '2025-08-13 23:03:41'),
+(382, 3, 63.00, 32.00, 'normal', '2025-08-14 00:03:41'),
+(383, 1, 42.00, 54.00, 'normal', '2025-08-13 15:05:54'),
+(384, 1, 36.00, 79.00, 'normal', '2025-08-13 16:05:54'),
+(385, 1, 41.00, 38.00, 'normal', '2025-08-13 17:05:54'),
+(386, 1, 78.00, 20.00, 'normal', '2025-08-13 18:05:54'),
+(387, 1, 64.00, 49.00, 'normal', '2025-08-13 19:05:54'),
+(388, 1, 65.00, 41.00, 'normal', '2025-08-13 20:05:54'),
+(389, 1, 46.00, 67.00, 'normal', '2025-08-13 21:05:54'),
+(390, 1, 54.00, 54.00, 'normal', '2025-08-13 22:05:54'),
+(391, 1, 61.00, 42.00, 'normal', '2025-08-13 23:05:54'),
+(392, 1, 19.00, 10.00, 'normal', '2025-08-14 00:05:54');
 
 --
 -- Indexes for dumped tables
@@ -1036,13 +1082,13 @@ ALTER TABLE `volume_history`
 -- AUTO_INCREMENT for table `abnormal_readings`
 --
 ALTER TABLE `abnormal_readings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `depos`
 --
 ALTER TABLE `depos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1096,7 +1142,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `volume_history`
 --
 ALTER TABLE `volume_history`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=353;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=393;
 
 --
 -- Constraints for dumped tables
