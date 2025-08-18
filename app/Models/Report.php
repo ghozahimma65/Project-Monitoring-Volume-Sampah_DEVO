@@ -27,7 +27,7 @@ class Report extends Model
 
     public function depo()
     {
-        return $this->belongsTo(Depo::class);
+        return $this->belongsTo(Depo::class, 'depo_id');belongsTo(Depo::class);
     }
     
     // Generate report ID otomatis
