@@ -68,11 +68,12 @@ class DepoController extends Controller
     public function destroy(Depo $depo)
     {
         try {
+            $depoName = $depo->nama_depo;
             $depo->delete();
             if (request()->wantsJson()) {
-                return response()->json(['success' => true, 'message' => "Depo '{$depo->nama_depo}' berhasil dihapus."]);
+                return response()->json(['success' => true, 'message' => "Depo '{$depoName}' berhasil dihapus."]);
             }
-            return redirect()->route('admin.depos.index')->with('success', "Depo '{$depo->nama_depo}' berhasil dihapus.");
+            return redirect()->route('admin.depos.index')->with('success', "Depo '{$depoName}' berhasil dihapus.");
         } catch (\Exception $e) {
             \Log::error('Error deleting depo: ' . $e->getMessage());
             if (request()->wantsJson()) {

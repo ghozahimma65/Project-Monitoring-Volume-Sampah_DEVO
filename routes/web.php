@@ -40,6 +40,8 @@ Route::prefix('laporan')->name('report.')->group(function () {
     Route::post('/', [PublicReportController::class, 'store'])->name('store');
     Route::get('/lacak', [PublicReportController::class, 'track'])->name('track');
     Route::post('/status', [PublicReportController::class, 'getReportStatus'])->name('status');
+    Route::get('/list', [PublicReportController::class, 'index'])->name('public.list');
+    Route::get('/laporan/list', [PublicReportController::class, 'getPublicReports']);
 });
 
 // == AUTHENTICATION ROUTES ==
@@ -70,7 +72,7 @@ Route::get('/dashboard-stats', [AdminDashboardController::class, 'getDashboardSt
         Route::put('/{depo}', [DepoController::class, 'update'])->name('update');
         Route::delete('/{depo}', [DepoController::class, 'destroy'])->name('destroy');
         Route::post('/preview-calculation', [DepoController::class, 'previewCalculation'])->name('preview-calculation');
-        Route::get('/depos/realtime-volumes', [DepoController::class, 'getRealtimeVolumes'])->name('depos.realtime-volumes');
+        Route::get('/realtime-volumes', [DepoController::class, 'getRealtimeVolumes'])->name('realtime-volumes');
 
     });
 
