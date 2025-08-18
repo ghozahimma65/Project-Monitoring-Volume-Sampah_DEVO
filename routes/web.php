@@ -14,12 +14,17 @@ use App\Http\Controllers\Api\SensorApiController;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\Admin\AbnormalReadingController;
 use App\Http\Controllers\Admin\NotificationController;
-
+use App\Models\Depo;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
+Route::get('/cek-status', function () {
+    $status = App\Models\Depo::pluck('status')->toArray();
+    dd($status);
+});
 
 // == PUBLIC ROUTES ==
 Route::get('/', [PublicDashboardController::class, 'index'])->name('dashboard');
