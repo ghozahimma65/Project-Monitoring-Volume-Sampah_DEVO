@@ -95,11 +95,15 @@ class SensorApiController extends Controller
 
     // app/Http/Controllers/Api/SensorApiController.php
 
-    public function getLatestVolume()
+public function getLatestVolume()
 {
     $latest = \App\Models\SensorReading::latest('reading_time')->first();
-    return response()->json($latest);
-}
 
+    return response()
+        ->json($latest)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
 
 }

@@ -276,18 +276,19 @@ class Depo extends Model
         return $query->where('status', $status);
     }
 
-    public function scopeCritical($query)
-    {
-        return $query->where('status', 'critical');
-    }
+public function scopeCritical($query)
+{
+    return $query->where('status', 'critical');
+}
 
-    public function scopeWarning($query)
-    {
-        return $query->where('status', 'warning');
-    }
+public function scopeWarning($query)
+{
+    return $query->where('status', 'warning');
+}
 
-    public function scopeNormal($query)
-    {
-        return $query->where('status', 'normal');
-    }
+public function scopeNormal($query)
+{
+    return $query->where('status', 'normal');
+}
+
 }

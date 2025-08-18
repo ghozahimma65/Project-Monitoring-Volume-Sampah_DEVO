@@ -467,7 +467,7 @@ function initVolumeChart() {
 // Function to fetch volume from API (same as public view)
 async function fetchVolume() {
     try {
-        const response = await fetch('http://172.16.100.106:8000/api/latest-volume');
+        const response = await fetch('{{ url("/api/latest-volume") }}');
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();

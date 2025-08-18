@@ -65,7 +65,11 @@ class PublicDashboardController extends Controller
                 'status_color' => $depo->status_color,
                 'status_text' => $depo->status_text,
                 'led_status' => $depo->led_status,
-                'last_updated' => $depo->last_updated?->format('d/m/Y H:i'),
+              'last_updated' => $depo->last_updated 
+    ? \Carbon\Carbon::parse($depo->last_updated)->format('Y-m-d H:i')
+    : null,
+
+
             ];
         });
 

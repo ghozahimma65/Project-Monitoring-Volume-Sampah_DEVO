@@ -1,12 +1,10 @@
 <?php
-
 return [
-
-    'paths' => ['api/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['*'], // <- ini izinkan semua origin
 
     'allowed_origins_patterns' => [],
 
@@ -17,5 +15,5 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => false,
-
 ];
+

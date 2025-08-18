@@ -1402,7 +1402,7 @@ function animateCounters() {
 // Function to fetch volume data from API
 async function fetchVolume() {
     try {
-        const response = await fetch('http://172.16.100.106:8000/api/latest-volume');
+const response = await fetch('{{ url("/api/latest-volume") }}');
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
