@@ -4,7 +4,7 @@
 @section('page-title', 'Kelola Depo')
 
 @section('content')
-<!-- Header Section -->
+
 <div class="header-section mb-4">
     <div class="card shadow-sm">
         <div class="card-body d-flex justify-content-between align-items-center">
@@ -21,7 +21,6 @@
     </div>
 </div>
 
-<!-- Depo List -->
 <div class="card shadow-sm">
     <div class="card-header bg-light">
         <h5 class="mb-0">
@@ -46,6 +45,17 @@
                 </thead>
                 <tbody>
                     @forelse($depos as $depo)
+                        {{-- Logika status dipindahkan di sini untuk setiap item depo --}}
+                        @php
+                            $volume = $depo->persentase_volume ?? 0;
+                            if ($volume >= 0 && $volume <= 80) {
+                                $status = 'normal';
+                            } elseif ($volume >= 81 && $volume <= 90) {
+                                $status = 'warning';
+                            } else {
+                                $status = 'critical';
+                            }
+                        @endphp
                         <tr data-depo-id="{{ $depo->id }}" class="depo-row">
                             <td>
                                 <div class="d-flex align-items-center">
@@ -62,18 +72,19 @@
                             <td>
                                 <div class="volume-container">
                                     <div class="progress mb-1" style="height: 20px;">
-                                        <div class="progress-bar volume-bar status-{{ strtolower($depo->status) }}"
+                                        <div class="progress-bar volume-bar status-{{ $status }}"
                                             role="progressbar"
-                                            style="width: {{ $depo->persentase_volume ?? 0 }}%"
-                                            aria-valuenow="{{ $depo->persentase_volume ?? 0 }}"
-                                            aria-valuemin="0" aria-valuemax="100"
+                                            style="width: {{ $volume }}%"
+                                            aria-valuenow="{{ $volume }}"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
                                             id="progress-bar-{{ $depo->id }}">
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <span id="volume-percentage-{{ $depo->id }}">
                                             {{ number_format($depo->persentase_volume ?? 0, 1) }}%
-                                        </span>
+                                        </span><br>
                                         <small id="volume-details-{{ $depo->id }}">
                                             {{ number_format($depo->volume_saat_ini ?? 0, 2) }} / {{ number_format($depo->volume_maksimal, 2) }} m³
                                         </small>
@@ -81,9 +92,10 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge status-badge status-{{ strtolower($depo->status) }}"
-                                      id="status-badge-{{ $depo->id }}">
-                                    {{ ucfirst($depo->status) }}
+                                {{-- Gunakan variabel $status yang sama --}}
+                                <span class="badge status-badge status-{{ $status }}"
+                                    id="status-badge-{{ $depo->id }}">
+                                    {{ ucfirst($status) }}
                                 </span>
                             </td>
                             <td>
@@ -106,10 +118,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-4">
-                                <i class="fas fa-inbox fa-3x text-muted mb-2"></i>
-                                <div class="text-muted">Belum ada depo yang terdaftar</div>
-                            </td>
+                            <td colspan="9" class="text-center text-muted">Belum ada depo yang terdaftar.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -137,19 +146,31 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function getStatusFromVolume(p) {
-    if (p <= 80) return 'normal';
-    if (p <= 90) return 'warning';
-    return 'critical';
+    if (p >= 0 && p <= 30) {
+        return 'normal';
+    } else if (p >= 31 && p <= 60) {
+        return 'warning';
+    } else { // >= 61
+        return 'critical';
+    }
 }
 
 function updateDepoUI(d) {
+    // Menghitung status dari persentase volume
     let status = getStatusFromVolume(d.persentase_volume);
+    
+    // Memperbarui progress bar
     document.getElementById(`progress-bar-${d.id}`).className = `progress-bar volume-bar status-${status}`;
     document.getElementById(`progress-bar-${d.id}`).style.width = d.persentase_volume + '%';
+
+    // Memperbarui teks persentase dan detail volume
     document.getElementById(`volume-percentage-${d.id}`).textContent = d.persentase_volume.toFixed(1) + '%';
     document.getElementById(`volume-details-${d.id}`).textContent = `${d.volume_saat_ini.toFixed(2)} / ${d.volume_maksimal.toFixed(2)} m³`;
-    document.getElementById(`status-badge-${d.id}`).className = `badge status-badge status-${status}`;
-    document.getElementById(`status-badge-${d.id}`).textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+    // Memperbarui status badge
+    let statusBadge = document.getElementById(`status-badge-${d.id}`);
+    statusBadge.className = `badge status-badge status-${status}`;
+    statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
 }
 
 async function fetchAllVolumes() {
