@@ -1021,44 +1021,37 @@ function loadChartData(period) {
 }
 
 // Function to fetch volume from API
-async function fetchVolume() {
+//let currentPercentage = 0;
+
+async function fetchVolume(depoId) {
     try {
-const response = await fetch('{{ url("/api/latest-volume") }}');
+        const response = await fetch(`/api/depo/${depoId}/latest-volume`);
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
         const volume = parseFloat(data.volume).toFixed(1);
-        
-        // Update current percentage
+
         const newPercentage = parseFloat(volume);
-        
-        // Only update if there's a change
+
         if (newPercentage !== currentPercentage) {
             currentPercentage = newPercentage;
-            
-            // Add new data point to historical data
             addDataPoint(currentPercentage);
-            
-            // Update gauge
             updateVolumeGauge(currentPercentage);
-            
-            // Update percentage display
             document.getElementById('volume-percentage').textContent = `${volume}%`;
-            
-            // Update status badge
             updateStatusBadge(currentPercentage);
-            
-            // Update chart if currently viewing hourly (real-time period)
+
             const activeButton = document.querySelector('.period-btn.active');
             if (activeButton && activeButton.dataset.period === 'hourly') {
                 updateChartRealTime();
             }
         }
-        
     } catch (error) {
         console.error('Gagal mengambil data volume:', error);
     }
 }
+
+fetchVolume({{ $depo->id }});
+setInterval(() => fetchVolume({{ $depo->id }}), 30000);
 
 // Function to update chart in real-time (for hourly view)
 function updateChartRealTime() {

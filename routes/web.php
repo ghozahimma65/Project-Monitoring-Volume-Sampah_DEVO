@@ -15,6 +15,18 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\Admin\AbnormalReadingController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Models\Depo;
+
+///
+// use Illuminate\Support\Facades\Route;
+
+Route::get('/api/depo/{depo}/latest-volume', function (Depo $depo) {
+    return response()->json([
+        'volume' => $depo->persentase_volume,
+    ]);
+})->name('depo.latestVolume');
+/////
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
