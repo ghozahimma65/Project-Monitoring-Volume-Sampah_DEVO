@@ -89,6 +89,13 @@ class PublicDashboardController extends Controller
         
         return response()->json($chartData);
     }
+    public function getPublicRealtimeData()
+{
+    $depos = \App\Models\Depo::where('is_active', true)
+                           ->get(['id', 'persentase_volume', 'status']);
+    
+    return response()->json($depos);
+}
 }
 
 

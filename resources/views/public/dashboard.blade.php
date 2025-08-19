@@ -209,7 +209,7 @@
                             </p>
                         </div>
                         <div class="depo-status">
-                            <span class="status-badge status-{{ $depo->status }}">
+                            <span class="status-badge status-{{ $depo->status }}" id="status-badge-public-{{ $depo->id }}">
                                 @if($depo->status === 'normal')
                                     <i class="fas fa-check-circle me-1"></i>Normal
                                 @elseif($depo->status === 'warning')
@@ -222,15 +222,15 @@
                                  title="LED Status: {{ $depo->led_status ? 'ON' : 'OFF' }}"></div>
                         </div>
                     </div>
-                   
+                    
                     <!-- Volume Indicator -->
                     <div class="volume-section">
                         <div class="volume-header">
                             <span class="volume-label">Volume Sampah</span>
-                            <span class="volume-percentage" id="volume-percentage">--%</span>
+                            <span class="volume-percentage" id="volume-percentage-public-{{ $depo->id }}">{{ number_format($depo->persentase_volume, 1) }}%</span>
                         </div>
                         <div class="volume-progress">
-                            <div class="progress-bar status-normal" id="progress-bar"></div>
+                            <div class="progress-bar status-{{ $depo->status }}" id="progress-bar-public-{{ $depo->id }}" style="width: {{ $depo->persentase_volume }}%;"></div>
                         </div>
                     </div>
 
@@ -246,7 +246,7 @@
                             </div>
                         </div>
                     </div>
-                   
+                    
                     <!-- Card Actions -->
                     <div class="depo-actions">
                         <a href="{{ route('depo.detail', $depo) }}" class="btn btn-primary btn-detail">
@@ -1179,11 +1179,64 @@
     }
 </style>
 @endpush
-
 @push('scripts')
 <script>
+function updateDepoCardUI(depoData) {
+    const depoId = depoData.id;
+    const percentage = parseFloat(depoData.persentase_volume);
+    const status = depoData.status;
 
+    // Cari elemen berdasarkan ID unik
+    const percentageElement = document.getElementById(`volume-percentage-public-${depoId}`);
+    const progressBarElement = document.getElementById(`progress-bar-public-${depoId}`);
+    const statusBadgeElement = document.getElementById(`status-badge-public-${depoId}`);
+    const cardElement = document.querySelector(`.depo-item[data-depo-id="${depoId}"] .depo-card`);
+
+    if (percentageElement) {
+        percentageElement.textContent = `${percentage.toFixed(1)}%`;
+    }
+
+    if (progressBarElement) {
+        progressBarElement.style.width = `${percentage}%`;
+        progressBarElement.className = `progress-bar status-${status}`;
+    }
+
+    if (statusBadgeElement) {
+        let icon = 'fa-check-circle';
+        if (status === 'warning') icon = 'fa-exclamation-triangle';
+        if (status === 'critical') icon = 'fa-times-circle';
+        statusBadgeElement.innerHTML = `<i class="fas ${icon} me-1"></i>${status.charAt(0).toUpperCase() + status.slice(1)}`;
+        statusBadgeElement.className = `status-badge status-${status}`;
+    }
     
+    if (cardElement) {
+        cardElement.className = `depo-card ${status}`;
+    }
+}
+async function refreshAllDepoCards() {
+    try {
+        const response = await fetch('{{ route("public.realtime.volumes") }}');
+        if (!response.ok) return;
+
+        const depos = await response.json();
+        
+        // Loop melalui data dan perbarui setiap kartu satu per satu
+        depos.forEach(depoData => {
+            updateDepoCardUI(depoData);
+        });
+        
+    } catch (error) {
+        console.warn('Gagal mengambil data volume publik:', error);
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Jalankan fungsi baru
+    refreshAllDepoCards();
+    setInterval(refreshAllDepoCards, 10000);
+    
+
 // Global variables for filtering
 let currentStatus = '{{ request("status") ?? "all" }}';
 let currentSearch = '{{ request("search") ?? "" }}';
@@ -1591,5 +1644,6 @@ function updateDashboard(data) {
 }
 </script>
 @endpush
+
 
 @endsection

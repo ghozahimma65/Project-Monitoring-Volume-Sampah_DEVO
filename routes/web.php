@@ -21,16 +21,17 @@ use App\Models\Depo;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/cek-status', function () {
-    $status = App\Models\Depo::pluck('status')->toArray();
-    dd($status);
-});
+// Route::get('/cek-status', function () {
+//     $status = App\Models\Depo::pluck('status')->toArray();
+//     dd($status);
+// });
 
 // == PUBLIC ROUTES ==
 Route::get('/', [PublicDashboardController::class, 'index'])->name('dashboard');
 Route::get('/depo/{depo}', [PublicDashboardController::class, 'show'])->name('depo.detail');
 Route::get('/api/dashboard', [PublicDashboardController::class, 'api'])->name('api.dashboard');
 Route::get('/api/depo/{depo}/chart', [PublicController::class, 'getChartData'])->name('api.depo.chart');
+Route::get('/api/public-volumes', [PublicDashboardController::class, 'getPublicRealtimeData'])->name('public.realtime.volumes');
 Route::get('/about', function () { return view('public.about'); })->name('about');
 Route::get('/depos/realtime-volumes', [DepoController::class, 'getRealtimeVolumes'])->name('depos.realtime-volumes');
 
