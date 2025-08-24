@@ -9,12 +9,14 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\TestNotificationController;
 use App\Http\Controllers\Public\PublicReportController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+// use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Public\PublicDashboardController;
 use App\Http\Controllers\Api\SensorApiController;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\Admin\AbnormalReadingController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Models\Depo;
+use App\Http\Controllers\PublicController;
 
 ///
 // use Illuminate\Support\Facades\Route;

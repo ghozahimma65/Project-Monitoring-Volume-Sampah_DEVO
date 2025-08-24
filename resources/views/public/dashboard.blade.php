@@ -1181,6 +1181,19 @@
 @endpush
 @push('scripts')
 <script>
+function setFilter(type, value) {
+    // bikin url base tanpa query lama
+    let baseUrl = window.location.origin + window.location.pathname;
+
+    if (type === 'status' && value !== 'all') {
+        window.location.href = baseUrl + '?status=' + value;
+    } else {
+        window.location.href = baseUrl; // kalau all balik ke / tanpa query
+    }
+}
+</script>
+
+<script>
 function updateDepoCardUI(depoData) {
     const depoId = depoData.id;
     const percentage = parseFloat(depoData.persentase_volume);
@@ -1215,16 +1228,14 @@ function updateDepoCardUI(depoData) {
 }
 async function refreshAllDepoCards() {
     try {
-        const response = await fetch('{{ route("public.realtime.volumes") }}');
-        if (!response.ok) return;
-
-        const depos = await response.json();
-        
-        // Loop melalui data dan perbarui setiap kartu satu per satu
-        depos.forEach(depoData => {
-            updateDepoCardUI(depoData);
-        });
-        
+        const url = new URL('{{ route("public.realtime.volumes") }}', window.location.origin);
+        if (currentStatus && currentStatus !== 'all') {
+            url.searchParams.set('status', currentStatus);
+        }
+        if (currentSearch) {
+            url.searchParams.set('search', currentSearch);
+        }
+        const response = await fetch(url.toString());
     } catch (error) {
         console.warn('Gagal mengambil data volume publik:', error);
     }
@@ -1243,21 +1254,15 @@ let currentSearch = '{{ request("search") ?? "" }}';
 
 // Filter functions
 function setFilter(type, value) {
-    if (type === 'status') {
-        currentStatus = value;
-    }
-   
-    // Update URL and apply filter
-    const url = new URL(window.location);
-    if (value === 'all') {
-        url.searchParams.delete('status');
-    } else {
+    const url = new URL(window.location.origin + window.location.pathname);
+
+    if (type === 'status' && value !== 'all') {
         url.searchParams.set('status', value);
     }
-   
-    // Update the page
+
     window.location.href = url.toString();
 }
+
 
 function applySearch() {
     const searchInput = document.getElementById('search-input');
@@ -1284,10 +1289,7 @@ function clearSearch() {
 }
 
 function resetFilters() {
-    const url = new URL(window.location);
-    url.searchParams.delete('status');
-    url.searchParams.delete('search');
-    window.location.href = url.toString();
+    window.location.href = window.location.pathname; // ⬅️ clear semua query string
 }
 
 // Search input events

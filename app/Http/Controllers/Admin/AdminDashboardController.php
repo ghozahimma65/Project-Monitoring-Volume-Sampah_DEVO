@@ -69,13 +69,18 @@ class AdminDashboardController extends Controller
     }
     public function getDashboardStats()
 {
+    // Statistik depo
     $statistics = $this->depoService->getDepoStatistics();
-    $criticalDepos = \App\Models\Depo::where('status', 'critical')->where('is_active', true)
-                                    ->get(['id', 'nama_depo', 'lokasi', 'persentase_volume']);
+
+    // Ambil depo critical aktif
+    $criticalDepos = Depo::where('status', 'critical')
+                        ->where('is_active', true)
+                        ->get(['id', 'nama_depo', 'lokasi', 'persentase_volume']);
 
     return response()->json([
-        'statistics' => $statistics,
+        'statistics'     => $statistics,
         'critical_depos' => $criticalDepos,
     ]);
 }
+
 }

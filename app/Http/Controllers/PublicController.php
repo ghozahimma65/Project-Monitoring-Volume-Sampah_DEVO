@@ -1,9 +1,11 @@
 <?php
-// Di controller dashboard Anda (misal PublicController.php)
+
+namespace App\Http\Controllers;
 
 use App\Services\NotificationService;
 use App\Models\Depo;
 use Carbon\Carbon;
+
 class PublicController extends Controller
 {
     protected $notificationService;
@@ -15,8 +17,9 @@ class PublicController extends Controller
 
     public function dashboard()
     {
-        // Existing code...
-        
+        // Ambil semua depo aktif
+        $depos = Depo::where('is_active', true)->get();
+
         // Cek depo critical dan buat notifikasi
         $criticalDepos = $depos->filter(function ($depo) {
             return $depo->persentase_volume >= 90;
@@ -35,32 +38,32 @@ class PublicController extends Controller
             $this->notificationService->removeCriticalVolumeNotification($depo->id);
         }
 
+        // hitung statistik sederhana (contoh)
+        $statistics = [
+            'total'    => $depos->count(),
+            'critical' => $criticalDepos->count(),
+            'normal'   => $normalDepos->count(),
+        ];
+
         return view('public.dashboard', compact('depos', 'statistics'));
     }
+
     public function getChartData(Depo $depo)
-{
-    // Ambil data histori volume dari 24 jam terakhir
-    $history = $depo->volumeHistory()
-                    ->where('recorded_at', '>=', Carbon::now()->subHours(24))
-                    
-                    // INI BAGIAN PENTING: Hanya ambil data yang nilainya lebih dari 0
-                    ->where('persentase', '>', 0) 
-                    
-                    ->orderBy('recorded_at', 'asc')
-                    ->get();
+    {
+        // Ambil data histori volume dari 24 jam terakhir
+        $history = $depo->volumeHistory()
+                        ->where('recorded_at', '>=', Carbon::now()->subHours(24))
+                        ->where('persentase', '>', 0)
+                        ->orderBy('recorded_at', 'asc')
+                        ->get();
 
-    // Siapkan data untuk dikirim ke grafik
-    $labels = $history->map(function ($item) {
-        return Carbon::parse($item->recorded_at)->format('H:i'); // Format waktu (Jam:Menit)
-    });
+        // Siapkan data untuk dikirim ke grafik
+        $labels = $history->map(fn($item) => Carbon::parse($item->recorded_at)->format('H:i'));
+        $data   = $history->pluck('persentase');
 
-    $data = $history->map(function ($item) {
-        return $item->persentase; // Ambil nilai persentasenya
-    });
-
-    return response()->json([
-        'labels' => $labels,
-        'data' => $data,
-    ]);
+        return response()->json([
+            'labels' => $labels,
+            'data'   => $data,
+        ]);
     }
 }

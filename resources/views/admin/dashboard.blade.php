@@ -1449,6 +1449,8 @@ function updateTime() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    refreshDashboardData(); // <-- ini penting
+    setInterval(refreshDashboardData, 10000); // refresh tiap 10 detik
     initializeStatusChart();
     initializeVolumeChart();
     
