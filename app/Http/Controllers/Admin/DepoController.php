@@ -86,9 +86,9 @@ class DepoController extends Controller
     public function previewCalculation(Request $request)
     {
         $validatedData = $request->validate([
-            'panjang' => 'required|numeric|min:1|max:50',
-            'lebar' => 'required|numeric|min:1|max:50',
-            'tinggi' => 'required|numeric|min:1|max:10',
+            'panjang' => 'required|numeric|min:1|max:100',
+            'lebar' => 'required|numeric|min:1|max:100',
+            'tinggi' => 'required|numeric|min:1|max:50',
         ]);
 
         $panjang = $validatedData['panjang'];
