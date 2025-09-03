@@ -42,31 +42,34 @@
                         <label class="form-label">Dimensi Depo <span class="text-danger">*</span></label>
                         <div class="row">
                             <div class="col-md-4">
-                                <label for="panjang" class="form-label small">Panjang (m)</label>
-                                <input type="number" step="0.1" min="1" max="50" 
+                                <label for="panjang" class="form-label small">Panjang (cm)</label>
+                                <input type="number" step="0.1" min="0.1" max="5000" 
+                                       placeholder="Contoh: 150.5"
                                        class="form-control @error('panjang') is-invalid @enderror" 
                                        name="panjang" id="panjang" value="{{ old('panjang') }}" 
-                                       required onchange="calculateSensors()">
+                                       required oninput="calculateSensors()">
                                 @error('panjang')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-4">
-                                <label for="lebar" class="form-label small">Lebar (m)</label>
-                                <input type="number" step="0.1" min="1" max="50" 
+                                <label for="lebar" class="form-label small">Lebar (cm)</label>
+                                <input type="number" step="0.1" min="0.1" max="5000" 
+                                       placeholder="Contoh: 80"
                                        class="form-control @error('lebar') is-invalid @enderror" 
                                        name="lebar" id="lebar" value="{{ old('lebar') }}" 
-                                       required onchange="calculateSensors()">
+                                       required oninput="calculateSensors()">
                                 @error('lebar')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-4">
-                                <label for="tinggi" class="form-label small">Tinggi (m)</label>
-                                <input type="number" step="0.1" min="1" max="10" 
+                                <label for="tinggi" class="form-label small">Tinggi (cm)</label>
+                                <input type="number" step="0.1" min="0.1" max="5000" 
+                                       placeholder="Contoh: 75.2"
                                        class="form-control @error('tinggi') is-invalid @enderror" 
                                        name="tinggi" id="tinggi" value="{{ old('tinggi') }}" 
-                                       required onchange="calculateSensors()">
+                                       required oninput="calculateSensors()">
                                 @error('tinggi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

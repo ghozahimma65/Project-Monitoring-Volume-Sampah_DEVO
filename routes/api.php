@@ -17,6 +17,7 @@ Route::get('/latest-volume', [SensorApiController::class, 'getLatestVolume']);
 
 
 // routes/web.php atau routes/api.php
+Route::get('/public-dashboard', [DepoController::class, 'getPublicDashboardData'])->name('api.public.dashboard');
 
 
 // Routes untuk notifikasi tanpa database
