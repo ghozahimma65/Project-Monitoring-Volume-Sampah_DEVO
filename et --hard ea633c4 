@@ -1,0 +1,19 @@
+[33m0dc9e11[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to 0dc9e11110ab073af1460a10e6b8dacc96987c9e
+[33m236c6ec[m HEAD@{1}: revert: Revert "first commit"
+[33m0dc9e11[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{2}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33ma19eef2[m HEAD@{3}: commit: Update SensorApiControllet (Troubleshooting koneksi hardware IoT ke database.)
+[33m474e859[m HEAD@{4}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33me3931d5[m HEAD@{5}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33m84619a8[m HEAD@{6}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33mea633c4[m HEAD@{7}: reset: moving to HEAD
+[33mea633c4[m HEAD@{8}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33m055b10b[m HEAD@{9}: commit: volume presentase di public dashboard
+[33mea7e45e[m HEAD@{10}: pull --ff --recurse-submodules --progress origin: Fast-forward
+[33m8762a54[m HEAD@{11}: commit: memperbaiki bug dan nambahin yang kurang
+[33mcbdbcf6[m HEAD@{12}: commit: Update devo.sql
+[33m9fd5ca4[m HEAD@{13}: commit: memperbaiki yang error
+[33m4ab1f7b[m HEAD@{14}: commit: perbaiki
+[33m802ace2[m HEAD@{15}: commit: tambah
+[33m64364ce[m HEAD@{16}: commit: Update index.blade.php
+[33md765db8[m HEAD@{17}: commit: Mengembangkan Depo
+[33m612f56f[m[33m ([m[1;31mupstream/main[m[33m, [m[1;31mupstream/HEAD[m[33m)[m HEAD@{18}: clone: from https://github.com/sairafazz/Project-Monitoring-Volume-Sampah_DEVO.git
