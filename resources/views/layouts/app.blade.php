@@ -436,10 +436,10 @@
             50% { transform: scale(1.1); }
         }
 
-        /* Notifications System
+        /* Notifications System */
         .notification-dropdown {
             position: relative;
-        } */
+        }
 
         .notification-btn {
             position: relative;
@@ -1077,7 +1077,37 @@
                 <img src="{{ asset('layouts/lifemedia_logo.png') }}" alt="DEVO" style="height: 40px;">
                 </a>
             </div>
-        
+            
+          <!-- ===== HTML NOTIFIKASI UNTUK APP.BLADE.PHP ===== -->
+            <!-- Ganti bagian notification dropdown di navbar-right -->
+
+            <!-- Right Section: Notifications + User Menu -->
+            <div class="navbar-right">
+                <!-- Notifications -->
+                <div class="notification-dropdown">
+                    <div class="notification-btn" id="notification-toggle">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge" id="notification-badge" style="display: none;">
+                            <span id="notification-count">0</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification Dropdown Menu -->
+                    <div class="notification-dropdown-menu" id="notification-menu">
+                        <div class="notification-header">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Depo Critical</h5>
+                            <p class="mb-0 opacity-75" style="font-size: 0.85rem;">Depo yang membutuhkan perhatian segera</p>
+                        </div>
+                        <div class="notification-list" id="notification-list">
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle text-success mb-2" style="font-size: 3rem; opacity: 0.5;"></i>
+                                <p class="text-muted mb-0">Tidak ada depo critical</p>
+                                <small class="text-muted">Semua depo dalam kondisi normal</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 @auth
                 <!-- User Menu -->
                 <div class="dropdown">
