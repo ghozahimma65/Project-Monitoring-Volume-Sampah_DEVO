@@ -7,7 +7,7 @@ use App\Models\Depo;
 
 class DepoCalculationService
 {
-    const SENSOR_COVERAGE_AREA = 4; // 2m x 2m per sensor
+    const SENSOR_COVERAGE_AREA = 2500; // 50cm x 50cm per sensor
     const MAX_SENSOR_PER_ESP = 4;
 
     public function calculateSensorCount(float $panjang, float $lebar): int
