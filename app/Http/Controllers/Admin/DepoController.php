@@ -37,9 +37,9 @@ class DepoController extends Controller
     $validatedData = $request->validated();
 
     // 2. Konversi dimensi ke METER untuk perhitungan dan penyimpanan
-    $panjang = $validatedData['panjang'] / 100;
-    $lebar = $validatedData['lebar'] / 100;
-    $tinggi = $validatedData['tinggi'] / 100;
+    $panjang = $validatedData['panjang']; // cm
+    $lebar   = $validatedData['lebar'];   // cm
+    $tinggi  = $validatedData['tinggi'];  // cm
 
     // --- TAMBAHAN: Lakukan Perhitungan Sensor & Volume di Sini ---
     // Logika ini harus SAMA PERSIS dengan logika di preview Anda.
@@ -118,10 +118,9 @@ class DepoController extends Controller
     'lebar' => 'required|numeric|min:0.1|max:5000',   // Izinkan desimal, maks 5000 cm
     'tinggi' => 'required|numeric|min:0.1|max:5000',  // Izinkan desimal, maks 5000 cm
 ]);
-
-        $panjang_meter = $validatedData['panjang'] / 100;
-        $lebar_meter = $validatedData['lebar'] / 100;
-        $tinggi_meter = $validatedData['tinggi'] / 100;
+        $panjang = $validatedData['panjang']; // cm
+        $lebar   = $validatedData['lebar'];   // cm
+        $tinggi  = $validatedData['tinggi'];  // cm
 
         $sensorCount = $this->depoService->calculateSensorCount($panjang, $lebar);
         $espCount = $this->depoService->calculateEspCount($sensorCount);

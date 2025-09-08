@@ -7,12 +7,12 @@ use App\Models\Depo;
 
 class DepoCalculationService
 {
-    const SENSOR_COVERAGE_AREA = 4; // 2m x 2m per sensor
+    const SENSOR_COVERAGE_AREA = 255; //15cm per sensor
     const MAX_SENSOR_PER_ESP = 4;
 
     public function calculateSensorCount(float $panjang, float $lebar): int
     {
-        $totalArea = $panjang * $lebar;
+ $totalArea = $panjang * $lebar; // cm²
         return ceil($totalArea / self::SENSOR_COVERAGE_AREA);
     }
 

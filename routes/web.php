@@ -41,6 +41,8 @@ Route::get('/api/depo/{depo}/latest-volume', function (Depo $depo) {
 // });
 
 // == PUBLIC ROUTES ==
+Route::get('/public-dashboard/data', [DashboardController::class, 'getData'])
+    ->name('public.dashboard.data');
 Route::get('/', [PublicDashboardController::class, 'index'])->name('dashboard');
 Route::get('/depo/{depo}', [PublicDashboardController::class, 'show'])->name('depo.detail');
 Route::get('/api/dashboard', [PublicDashboardController::class, 'api'])->name('api.dashboard');

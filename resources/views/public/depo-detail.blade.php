@@ -1194,6 +1194,15 @@ window.addEventListener('scroll', function() {
         const speed = scrolled * 0.3;
         header.style.transform = `translateY(${speed}px)`;
     }
+
+    // Tambahkan ini di akhir script
+document.addEventListener('DOMContentLoaded', function() {
+    // Panggil pertama kali saat halaman load
+    fetchVolume({{ $depo->id }});
+    
+    // Refresh otomatis setiap 30 detik
+    setInterval(() => fetchVolume({{ $depo->id }}), 30000);
+});
 });
 </script>
 @endpush

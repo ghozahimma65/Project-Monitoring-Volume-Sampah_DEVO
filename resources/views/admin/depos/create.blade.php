@@ -102,7 +102,7 @@
                             <div class="mt-2">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle"></i> 
-                                    Perhitungan berdasarkan coverage area 2×2m per sensor dan maksimal 4 sensor per ESP32
+                                    Perhitungan berdasarkan coverage area 15×15 cm per sensor dan maksimal 4 sensor per ESP32
                                 </small>
                             </div>
                         </div>
