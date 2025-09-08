@@ -16,8 +16,16 @@ Route::get('/sensor-data', [SensorApiController::class, 'index']);
 Route::get('/latest-volume', [SensorApiController::class, 'getLatestVolume']);
 
 
-// routes/web.php atau routes/api.php
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+// Rute yang sudah ada untuk detail depo admin
+Route::get('/depo/{depo}/latest-data', [DepoController::class, 'getLatestData'])->name('api.depo.latest-data');
+
+// TAMBAHKAN ATAU PASTIKAN RUTE INI ADA:
 Route::get('/public-dashboard', [DepoController::class, 'getPublicDashboardData'])->name('api.public.dashboard');
+
 
 
 // Routes untuk notifikasi tanpa database
