@@ -6,6 +6,11 @@
 @section('title', 'Dashboard Monitoring Depo Sampah')
 
 @section('content')
+<script>
+  setTimeout(function(){
+    location.reload();
+  }, 10000); // refresh tiap 5 detik
+</script>
 <div class="container">
     <!-- Hero Section with Real-time Stats -->
     <div class="hero-section mb-5" data-aos="fade-up">
