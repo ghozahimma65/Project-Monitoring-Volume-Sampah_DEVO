@@ -1273,7 +1273,11 @@ function initializeStatusChart() {
         data: {
             labels: ['Normal', 'Warning', 'Critical'],
             datasets: [{
-                data: [realTimeData.normal, realTimeData.warning, realTimeData.critical],
+                data: [
+                        {{ $statistics['normal'] }}, 
+                        {{ $statistics['warning'] }}, 
+                        {{ $statistics['critical'] }}
+],
                 backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
                 borderWidth: 0,
                 hoverOffset: 8
@@ -1498,11 +1502,7 @@ function updateTime() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    refreshDashboardData(); // <-- ini penting
-    setInterval(refreshDashboardData, 10000); // refresh tiap 10 detik
-    initializeStatusChart();
-    initializeVolumeChart();
-    
+    // 1. Isi data ke variabel JavaScript TERLEBIH DAHULU
     const initialNormal = {{ $statistics['normal'] }};
     const initialWarning = {{ $statistics['warning'] }};
     const initialCritical = {{ $statistics['critical'] }};
@@ -1510,20 +1510,16 @@ document.addEventListener('DOMContentLoaded', function() {
     realTimeData.normal = initialNormal;
     realTimeData.warning = initialWarning;
     realTimeData.critical = initialCritical;
+
+    // 2. BARU panggil fungsi untuk membuat chart
+    refreshDashboardData(); 
+    initializeStatusChart(); 
+    initializeVolumeChart();
     
+    // 3. Update tampilan lainnya
     updateStatisticsDisplay();
     setTimeout(animateCounters, 500);
-    updateVolumeChart();
-    setInterval(updateTime, 1000);
-    setInterval(updateVolumeChart, 1000);
-    
-    if (typeof AOS !== 'undefined') {
-        AOS.init({
-            duration: 600,
-            easing: 'ease-out-cubic',
-            once: true
-        });
-    }
+    // ... sisa kodenya sama
 });
 
 // Real-time updates via WebSocket (if available)
