@@ -212,25 +212,74 @@
             </div>
         </div>
     </div>
-    
-    <!-- Real-time Volume Chart -->
-    <div class="col-md-6">
-        <div class="chart-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="chart-header">
-                <h5 class="chart-title">
-                    <i class="fas fa-chart-bar me-2"></i>Volume Real-time
-                </h5>
-                <div class="real-time-indicator">
-                    <div class="pulse-dot"></div>
-                    <span>Live</span>
-                </div>
-            </div>
-            <div class="chart-body">
-                <canvas id="volumeChart" height="300"></canvas>
-            </div>
+
+<!-- Volume Real-time Chart -->
+<div class="col-md-6">
+    <div class="chart-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="chart-header">
+            <h5 class="chart-title">
+                <i class="fas fa-chart-bar me-2"></i>Volume Real-time (3 hari terakhir)
+            </h5>
+        </div>
+        <!-- Bikin tinggi fix biar gak kepanjangan -->
+        <div class="chart-body" style="height:350px;">
+            <canvas id="volumeChart"></canvas>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('volumeChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["Hari 1", "Hari 2", "Hari 3"],
+                datasets: [{
+                    label: 'Volume (%)',
+                    data: [75, 60, 85], // contoh data
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    backgroundColor: "rgba(54, 162, 235, 0.2)",
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: "rgba(54, 162, 235, 1)"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // biar ikut tinggi div
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: "Volume (%)"
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    /* Tambahan biar rapet */
+    .chart-card {
+        margin-bottom: 20px; /* jarak ke bawah secukupnya */
+    }
+    #volumeChart {
+        max-height: 250px; /* batasi tinggi canvas */
+    }
+</style>
+
 
 <!-- Activity Section -->
 <div class="row">

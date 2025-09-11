@@ -41,6 +41,20 @@ Route::get('/api/depo/{depo}/latest-volume', function (Depo $depo) {
 // });
 
 // == PUBLIC ROUTES ==
+use Illuminate\Support\Facades\Session;
+
+Route::get('/cek-data', function () {
+    $lastData = Depo::latest()->first();
+    $sessionLast = Session::get('last_data_id');
+
+    if (!$sessionLast || $sessionLast != $lastData->id) {
+        Session::put('last_data_id', $lastData->id);
+        return response()->json(['ada_data_baru' => true]);
+    }
+
+    return response()->json(['ada_data_baru' => false]);
+});
+
 Route::get('/public-dashboard/data', [DashboardController::class, 'getData'])
     ->name('public.dashboard.data');
 Route::get('/', [PublicDashboardController::class, 'index'])->name('dashboard');

@@ -6,11 +6,17 @@
 @section('title', 'Dashboard Monitoring Depo Sampah')
 
 @section('content')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  setTimeout(function(){
-    location.reload();
-  }, 10000); // refresh tiap 5 detik
+    setInterval(function () {
+        $.get('/cek-data', function (response) {
+            if (response.ada_data_baru) {
+                location.reload(); // refresh halaman kalau ada data baru
+            }
+        });
+    }, 5000); // cek tiap 5 detik
 </script>
+
 <div class="container">
     <!-- Hero Section with Real-time Stats -->
     <div class="hero-section mb-5" data-aos="fade-up">

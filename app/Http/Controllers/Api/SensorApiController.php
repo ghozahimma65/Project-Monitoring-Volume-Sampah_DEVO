@@ -12,6 +12,30 @@ use Illuminate\Http\JsonResponse;
 
 class SensorApiController extends Controller
 {
+
+// app/Http/Controllers/Api/SensorApiController.php
+
+public function getAdminHistory()
+{
+    try {
+        $data = \DB::table('sensor_readings')
+            ->selectRaw('DATE(created_at) as tanggal, AVG(volume) as avg_volume')
+            ->where('created_at', '>=', now()->subDays(3))
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        return response()->json($data);
+    } catch (\Exception $e) {
+        \Log::error('Gagal ambil data history admin: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Internal Server Error',
+            'error'   => $e->getMessage()
+        ], 500);
+    }
+}
+
+
     public function store(Request $request)
     {
         try {

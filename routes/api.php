@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\SensorApiController;
 use App\Http\Controllers\Api\NotificationController;
 
 
+
+Route::get('/admin/sensor/history', [SensorApiController::class, 'getAdminHistory']);
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
