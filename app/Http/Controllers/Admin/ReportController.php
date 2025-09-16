@@ -222,6 +222,7 @@ class ReportController extends Controller
                     'message' => 'Transisi status tidak valid dari ' . $currentStatus . ' ke ' . $newStatus,
                 ], 400);
             }
+            
 
             // Update report
             $updateData = [
@@ -268,5 +269,6 @@ class ReportController extends Controller
                 'message' => 'Terjadi kesalahan saat memperbarui status: ' . $e->getMessage(),
             ], 500);
         }
+        
     }
 }

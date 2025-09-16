@@ -100,8 +100,7 @@ class PublicReportController extends Controller
     public function getPublicReports()
 {
     try {
-        $reports = Report::with('depo')->latest()->get();
-
+        $reports = Report::with('depo')->latest()->paginate(10); //
         return response()->json([
             'success' => true,
             'data' => $reports

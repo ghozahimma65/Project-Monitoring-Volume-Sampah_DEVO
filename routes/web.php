@@ -73,6 +73,9 @@ Route::prefix('laporan')->name('report.')->group(function () {
     Route::post('/status', [PublicReportController::class, 'getReportStatus'])->name('status');
     Route::get('/list', [PublicReportController::class, 'index'])->name('public.list');
     Route::get('/laporan/list', [PublicReportController::class, 'getPublicReports']);
+    Route::get('/laporan/list', [ReportController::class, 'getLaporanData'])->name('laporan.list');
+    Route::get('/list', [PublicReportController::class, 'getPublicReports'])->name('public.list');
+
 });
 
 // == AUTHENTICATION ROUTES ==
