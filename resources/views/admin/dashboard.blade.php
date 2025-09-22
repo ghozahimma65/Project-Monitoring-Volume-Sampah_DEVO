@@ -217,10 +217,9 @@
 <div class="col-md-6">
     <div class="chart-card" data-aos="fade-up" data-aos-delay="300">
         <div class="chart-header">
-            <h5 class="chart-title">
-                <i class="fas fa-chart-bar me-2"></i>Volume Real-time (3 hari terakhir)
-            </h5>
-        </div>
+    <h5 class="card-title mb-0">Volume Rata-Rata (3 Hari Terakhir)</h5>
+    <small class="text-muted">Grafik ini menampilkan rata-rata persentase volume dari semua depo.</small>
+</div>
         <!-- Bikin tinggi fix biar gak kepanjangan -->
         <div class="chart-body" style="height:350px;">
             <canvas id="volumeChart"></canvas>
@@ -396,12 +395,12 @@
                             <div class="status-value" id="last-update">
                                 {{ now()->format('H:i:s') }}
                             </div>
-                        </div>
+                        <!-- </div>
                         <div class="status-item">
                             <div class="status-label">Active Users</div>
                             <div class="status-value">
                                 <i class="fas fa-users me-1"></i>{{ $statistics['active_users'] ?? 1 }}
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -653,7 +652,7 @@
 
     .chart-title {
         margin: 0;
-        font-weight: 700;
+        font-weight: 500;
         color: var(--dark-color);
     }
 

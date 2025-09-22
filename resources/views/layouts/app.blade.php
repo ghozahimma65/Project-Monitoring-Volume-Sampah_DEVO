@@ -1074,8 +1074,8 @@
                 
                 <link rel="icon" href="http://103.255.15.227/lifemedia_logo.png?v=1753515070" type="image/png">
                 <a class="navbar-brand heading-font" href="{{ route('dashboard') }}">
-                <img src="{{ asset('layouts/lifemedia_logo.png') }}" alt="DEVO" style="height: 40px;">
-                </a>
+                <i class="fas fa-recycle me-2"></i> DEVO
+</a>
             </div>
                 @auth
                 <!-- User Menu -->
@@ -1676,5 +1676,11 @@
     </script>
     
     @stack('scripts')
+    <style>
+        .fa-calendar + span {
+            display: none !important;
+        }
+    </style>
+    
 </body>
 </html>

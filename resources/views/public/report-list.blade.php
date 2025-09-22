@@ -32,7 +32,7 @@
                                     <small class="text-muted">{{ $report->depo->lokasi ?? '' }}</small>
                                 </td>
                                 <td>{{ $report->kategori }}</td>
-                                <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d M Y, H:i') }}</td>
+                                <td>{{ $report->created_at->format('d M Y, H:i') }}</td>
                                 <td>
                                     <span class="badge rounded-pill bg-info text-dark">{{ $report->status ?? 'Pending' }}</span>
                                 </td>

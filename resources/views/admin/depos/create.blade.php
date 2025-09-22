@@ -44,7 +44,7 @@
                             <div class="col-md-4">
                                 <label for="panjang" class="form-label small">Panjang (cm)</label>
                                 <input type="number" step="0.1" min="0.1" max="5000" 
-                                       placeholder="Contoh: 150.5"
+                                       placeholder="Contoh: 15"
                                        class="form-control @error('panjang') is-invalid @enderror" 
                                        name="panjang" id="panjang" value="{{ old('panjang') }}" 
                                        required oninput="calculateSensors()">
@@ -55,7 +55,7 @@
                             <div class="col-md-4">
                                 <label for="lebar" class="form-label small">Lebar (cm)</label>
                                 <input type="number" step="0.1" min="0.1" max="5000" 
-                                       placeholder="Contoh: 80"
+                                       placeholder="15"
                                        class="form-control @error('lebar') is-invalid @enderror" 
                                        name="lebar" id="lebar" value="{{ old('lebar') }}" 
                                        required oninput="calculateSensors()">
@@ -66,7 +66,7 @@
                             <div class="col-md-4">
                                 <label for="tinggi" class="form-label small">Tinggi (cm)</label>
                                 <input type="number" step="0.1" min="0.1" max="5000" 
-                                       placeholder="Contoh: 75.2"
+                                       placeholder="30"
                                        class="form-control @error('tinggi') is-invalid @enderror" 
                                        name="tinggi" id="tinggi" value="{{ old('tinggi') }}" 
                                        required oninput="calculateSensors()">

@@ -84,7 +84,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="tinggi" class="form-label small">Tinggi (m)</label>
-                                <input type="number" step="0.1" min="0" max="10" 
+                                <input type="number" step="0.1" min="0" max="5000" 
                                        class="form-control @error('tinggi') is-invalid @enderror" 
                                        name="tinggi" id="tinggi" value="{{ old('tinggi', $depo->tinggi) }}" 
                                        required onchange="calculateSensors()">
