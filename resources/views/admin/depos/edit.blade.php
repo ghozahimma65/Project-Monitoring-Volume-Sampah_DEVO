@@ -47,8 +47,7 @@
                                 <strong>Volume:</strong> {{ number_format($depo->persentase_volume, 1) }}%
                             </div>
                             <div class="col-md-3">
-                                <strong>Status:</strong> 
-                                <span class="badge status-{{ $depo->status }}">{{ $depo->status_text }}</span>
+                                <strong>Status:</strong> {{ $depo->status_text }}
                             </div>
                             <div class="col-md-3">
                                 <strong>Sensor:</strong> {{ $depo->jumlah_sensor }} unit
