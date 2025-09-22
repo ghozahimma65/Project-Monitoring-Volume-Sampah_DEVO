@@ -1,60 +1,85 @@
 <?php
 
-// app/Services/DepoCalculationService.php
 namespace App\Services;
 
 use App\Models\Depo;
 
 class DepoCalculationService
 {
-    const SENSOR_COVERAGE_AREA = 255; //15cm per sensor
+    // Coverage area 1 sensor = 15cm × 15cm = 225 cm²
+    const SENSOR_COVERAGE_AREA = 225;
     const MAX_SENSOR_PER_ESP = 4;
 
+    /**
+     * Hitung jumlah sensor berdasarkan dimensi (dalam cm)
+     */
     public function calculateSensorCount(float $panjang, float $lebar): int
     {
- $totalArea = $panjang * $lebar; // cm²
-        return ceil($totalArea / self::SENSOR_COVERAGE_AREA);
+        $totalArea = $panjang * $lebar; // cm²
+        return (int) ceil($totalArea / self::SENSOR_COVERAGE_AREA);
     }
 
+    /**
+     * Hitung jumlah ESP32
+     */
     public function calculateEspCount(int $sensorCount): int
     {
-        return ceil($sensorCount / self::MAX_SENSOR_PER_ESP);
+        return (int) ceil($sensorCount / self::MAX_SENSOR_PER_ESP);
     }
 
+    /**
+     * Hitung volume maksimal (dikonversi ke m³)
+     */
     public function calculateMaxVolume(float $panjang, float $lebar, float $tinggi): float
     {
-        return $panjang * $lebar * $tinggi;
+        // Konversi cm → m
+        $panjang_m = $panjang / 100;
+        $lebar_m   = $lebar / 100;
+        $tinggi_m  = $tinggi / 100;
+
+        return $panjang_m * $lebar_m * $tinggi_m;
     }
 
+    /**
+     * Persiapkan data lengkap depo (sensor, ESP, volume, luas)
+     */
     public function prepareDepoData(array $input): array
     {
         $sensorCount = $this->calculateSensorCount($input['panjang'], $input['lebar']);
         $espCount = $this->calculateEspCount($sensorCount);
         $maxVolume = $this->calculateMaxVolume(
-            $input['panjang'], 
-            $input['lebar'], 
+            $input['panjang'],
+            $input['lebar'],
             $input['tinggi']
         );
 
+        // Luas area (m²)
+        $luasArea = ($input['panjang'] / 100) * ($input['lebar'] / 100);
+
         return array_merge($input, [
-            'jumlah_sensor' => $sensorCount,
-            'jumlah_esp' => $espCount,
-            'volume_maksimal' => $maxVolume,
+            'luas_area'        => $luasArea,
+            'jumlah_sensor'    => $sensorCount,
+            'jumlah_esp32'     => $espCount,
+            'volume_maksimal'  => $maxVolume,
         ]);
     }
 
+    /**
+     * Statistik depo aktif
+     */
     public function getDepoStatistics()
     {
         return [
-            'total_depo' => Depo::active()->count(),
-            'normal' => Depo::active()->normal()->count(),
-            'warning' => Depo::active()->warning()->count(),
-            'critical' => Depo::active()->critical()->count(),
-            'total_volume' => Depo::active()->sum('volume_saat_ini'),
-            'total_capacity' => Depo::active()->sum('volume_maksimal'),
+            'total_depo'      => Depo::active()->count(),
+            'normal'          => Depo::active()->normal()->count(),
+            'warning'         => Depo::active()->warning()->count(),
+            'critical'        => Depo::active()->critical()->count(),
+            'total_volume'    => Depo::active()->sum('volume_saat_ini'),
+            'total_capacity'  => Depo::active()->sum('volume_maksimal'),
         ];
     }
 }
+
 
 // app/Services/VolumeCalculationService.php
 namespace App\Services;
